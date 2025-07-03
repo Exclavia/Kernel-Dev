@@ -156,7 +156,7 @@ CFLAGS=-nostdlib -nostdinc -fno-builtin -fno-stack-protector
 We must stop GCC trying to link your linux C library with our kernel - it won't work at all (yet). That's what those CFLAGS are for.
 
 OK, you should now be able to compile, link and run your kernel!
-```bash
+```sh
 cd src
 make clean  # Ignore any errors here.
 make
