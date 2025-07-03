@@ -82,5 +82,59 @@ Enabling paging is extremely easy.
 
 ## 6.3. Page faults
 When a process does something the memory-management unit doesn't like, a page fault interrupt is thrown. Situations that can cause this are (not complete):
+- Reading from or writing to an area of memory that is not mapped (page entry/table's 'present' flag is not set)
+- The process is in user-mode and tries to write to a read-only page.The process is in user-mode and tries to access a kernel-only page.
+- The page table entry is corrupted - the reserved bits have been overwritten.
 
-Reading from or writing to an area of memory that is not mapped (page entry/table's 'present' flag is not set)The process is in user-mode and tries to write to a read-only page.The process is in user-mode and tries to access a kernel-only page.The page table entry is corrupted - the reserved bits have been overwritten.
+The page fault interrupt is number 14, and looking at [chapter 3](https://github.com/Exclavia/Kernel-Dev/blob/main/03-screen.md) we can see that this throws an error code. This error code gives us quite a bit of information about what happened.
+
+**Bit 0**
+> If set, the fault was not because the page wasn't present. If unset, the page wasn't present.
+
+**Bit 1**
+> If set, the operation that caused the fault was a write, else it was a read.
+
+**Bit 2**
+> If set, the processor was running in user-mode when it was interrupted. Else, it was running in kernel-mode.
+
+**Bit 3**
+> If set, the fault was caused by reserved bits being overwritten.
+
+**Bit 4**
+> If set, the fault occurred during an instruction fetch.
+
+The processor also gives us another piece of information - the address that caused the fault. This is located in the CR2 register. Beware that if your page fault hander itself causes another page fault exception this register will be overwritten - so save it early!
+
+## 6.4. Putting it into practice
+We're almost ready to start implementing. We will, however, need a few assistant functions first, the most important of which are memory management functions.
+
+### 6.4.1. Simple memory management with placement malloc
+If you come from a C++ background, you may have heard of 'placement new'. This is a version of new that takes a parameter. Instead of calling malloc, as it normally would, it creates the object at the address specified. We are going to use a very similar concept.
+
+When the kernel is sufficiently booted, we will have a kernel heap active and operational. The way we code heaps, though, usually requires that virtual memory is enabled. So we need a simple alternative to allocate memory before the heap is active.
+
+As we're allocating quite early on in the kernel bootup, we can make the assumption that nothing that is kmalloc()'d will ever need to be kfree()'d. This simplifies things greatly. We can just have a pointer (placement address) to some free memory that we pass back to the requestee then increment. Thus:
+```c
+u32int kmalloc(u32int sz)
+{
+  u32int tmp = placement_address;
+  placement_address += sz;
+  return tmp;
+}
+```
+That will actually suffice. However, we have another requirement. When we allocate page tables and directories, they must be page-aligned. So we can build that in:
+```c
+u32int kmalloc(u32int sz, int align)
+{
+  if (align == 1 && (placement_address & 0xFFFFF000)) // If the address is not already page-aligned
+  {
+    // Align it.
+    placement_address &= 0xFFFFF000;
+    placement_address += 0x1000;
+  }
+  u32int tmp = placement_address;
+  placement_address += sz;
+  return tmp;
+}
+```
+
