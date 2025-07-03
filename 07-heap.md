@@ -7,4 +7,27 @@ As a sidepoint of general terminology, any data structure that provides both a
 
 The algorithm and data structures presented here are ones which I developed myself. They are so simple however, that I am sure others will have used it first. It is similar to (though more simple than) [Doug Lea's malloc](https://gee.cs.oswego.edu/dl/html/malloc.html) which is used in the GNU C library.
 
+## 7.1. Data structure description
+The algorithm uses two concepts: blocks and holes. Blocks are contiguous areas of memory containing user data currently in use (i.e. malloc()d but not free()d). Holes are blocks but their contents are not in use. So initially by this concept the entire area of heap space is one large hole.
+<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/heap_format.png" >
+For every hole there is a corresponding descriptor in an index table. The index table is always ordered ascending by the size of the hole pointed to.
+
+Blocks and holes each contain descriptive data - a header and a footer. The header contains the most information about the block - the footer merely contains a pointer to the header (the reason for the footer will become apparent soon). Pseudocode:
+```c
+typedef struct
+{
+  u32int magic;  // Magic number, used for error checking and identification.
+  u8int is_hole; // 1 if this is a hole, 0 if this is a block.
+  u32int size;   // Size of the block, including this and the footer.
+} header_t;
+
+typedef struct
+{
+  u32int magic;     // Magic number, same as in header_t.
+  header_t *header; // Pointer to the block header.
+} footer_t;
+```
+Notice that each also has a 'magic number' field. This is for error checking, and later will play a part in our 'free' algorithm. This is just a sentinel number - an unusual number that will stand out from others - much like 0xdeadbaba that we used in chapter 2. In the sample code I've gone for 0x123890AB arbitrarily.
+
+Note also that within this tutorial I will refer to the size of a block being the number of bytes from the start of the header to the end of the footer - so within a block of size x, there will be x - sizeof(header_t) - sizeof(footer_t) user-useable bytes.
 
