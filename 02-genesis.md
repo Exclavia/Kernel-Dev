@@ -184,11 +184,15 @@ If you open bochsout.txt, at the bottom you should see something like:
 00074621500i[CPU  ] | CR3=0x00000000 CR4=0x00000000
 00074621500i[CPU  ] >> jmp .+0xfffffffe (0x00100027) : EBFE
 ```
+
+<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/genesis_bochs.png">
+
 Notice what the value of EAX is? 0xDEADBABA - the return value of main().
+
 
 Congratulations, you now have a multiboot compatible assembly trampoline, and you're ready to start printing to the screen!
 
-Sample code for this tutorial can be found here
+Sample code for this tutorial can be found [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/genesis.tar)
 
 
 
