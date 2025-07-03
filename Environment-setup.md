@@ -15,5 +15,6 @@ All your source files will go in src, and all your documentation (you do write d
 ## 1.2. Compiling
 The examples in this tutorial should compile successfully with the GNU toolchain (gcc, ld, gas, etc). The assembly examples are written in intel syntax, which is (my personal opinion) a much more human-readable syntax than the AT&T syntax that GNU AS uses. To assemble these, you will need the [Netwide Assembler](https://www.nasm.us/).
 
-This tutorial is not a bootloader tutorial. We will be using [GRUB](https://www.gnu.org/software/grub/) to load our kernel. To do this, we need a floppy disk image with GRUB preloaded onto it. There are tutorials to do this, but, happily, I have made a standard image, which can be found here. This goes in your 'tutorial' (or whatever you named it) directory.
+This tutorial is not a bootloader tutorial. We will be using [GRUB](https://www.gnu.org/software/grub/) to load our kernel. To do this, we need a floppy disk image with GRUB preloaded onto it. There are tutorials to do this, but, happily, I have made a standard image, which can be found [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/floppy.img). [^1] This goes in your 'tutorial' (or whatever you named it) directory.
 
+[^1]: Assumed to be original referenced file. See files [README](https://github.com/Exclavia/Kernel-Dev/blob/main/files/README.md) for more info.
