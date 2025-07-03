@@ -101,6 +101,29 @@ SECTIONS
 ```
 This script tells LD how to set up our kernel image. Firstly it tells LD that the start location of our binary should be the symbol 'start'. It then tells LD that the .text section (that's where all your code goes) should be first, and should start at 0x100000 (1MB). The .data (initialised static data) and the .bss (uninitialised static data) should be next, and each should be page-aligned (ALIGN(4096)). Linux GCC also adds in an extra data section: .rodata. This is for read-only initialised data, such as constants. For simplicity we simply bundle this in with the .data section.
 
+### 1.5.3. update_image.sh
+A nice little script that will poke your new kernel binary into the floppy image file (This assumes you have made a directory /mnt). Note: you will need /sbin in your $PATH to use losetup.
+```
+#!/bin/bash
+
+sudo losetup /dev/loop0 floppy.img
+sudo mount /dev/loop0 /mnt
+sudo cp src/kernel /mnt/kernel
+sudo umount /dev/loop0
+sudo losetup -d /dev/loop0
+```
+### 1.5.4. run_bochs.sh
+This script will setup a loopback device, run bochs on it, then disconnect it.
+```
+#!/bin/bash
+
+# run_bochs.sh
+# mounts the correct loopback device, runs bochs, then unmounts.
+
+sudo /sbin/losetup /dev/loop0 floppy.img
+sudo bochs -f bochsrc.txt
+sudo /sbin/losetup -d /dev/loop0
+```
 
 [^1]: Assumed to be original referenced file. See files [README](https://github.com/Exclavia/Kernel-Dev/blob/main/files/README.md) for more info.
 [^2]: Alternative version with slight differences also available [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/alt_bochsrc.txt)
