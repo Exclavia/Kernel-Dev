@@ -431,3 +431,61 @@ It uses our kmalloc_ap function to retrieve a memory block which is page-align
 
 initialise_paging firstly creates the frames bitset, and sets everything to zero using memset. Then it allocates space (which is page-aligned) for a page directory. After that, it allocates frames such that any page access will map to the frame with the same linear address, called identity-mapping. This is done for a small section of the address space, so the kernel code can continue to run as normal. It registers an interrupt handler for page faults (below) then enables paging.
 
+### 6.4.5. The page fault handler
+```c
+void page_fault(registers_t regs)
+{
+   // A page fault has occurred.
+   // The faulting address is stored in the CR2 register.
+   u32int faulting_address;
+   asm volatile("mov %%cr2, %0" : "=r" (faulting_address));
+
+   // The error code gives us details of what happened.
+   int present   = !(regs.err_code & 0x1); // Page not present
+   int rw = regs.err_code & 0x2;           // Write operation?
+   int us = regs.err_code & 0x4;           // Processor was in user-mode?
+   int reserved = regs.err_code & 0x8;     // Overwritten CPU-reserved bits of page entry?
+   int id = regs.err_code & 0x10;          // Caused by an instruction fetch?
+
+   // Output an error message.
+   monitor_write("Page fault! ( ");
+   if (present) {monitor_write("present ");}
+   if (rw) {monitor_write("read-only ");}
+   if (us) {monitor_write("user-mode ");}
+   if (reserved) {monitor_write("reserved ");}
+   monitor_write(") at 0x");
+   monitor_write_hex(faulting_address);
+   monitor_write("\n");
+   PANIC("Page fault");
+}
+```
+All this handler does is print out a nice error message. It gets the faulting address from CR2, and analyses the error code pushed by the processor to glean some information from it.
+
+### 6.4.6. Testing
+Awesome! you now have code that enables paging and handles page faults! Let's just check it actually works, shall we ...?
+
+main.c
+```c
+int main(struct multiboot *mboot_ptr)
+{
+   // Initialise all the ISRs and segmentation
+   init_descriptor_tables();
+   // Initialise the screen (by clearing it)
+   monitor_clear();
+
+   initialise_paging();
+   monitor_write("Hello, paging world!\n");
+
+   u32int *ptr = (u32int*)0xA0000000;
+   u32int do_page_fault = *ptr;
+
+   return 0;
+}
+```
+<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/paging_bochs_3.png" >
+
+This will, obviously, initialise paging, print a string to make sure it's set up right and not faulting when it shoudn't, and then force a page fault by reading location 0xA0000000.
+
+
+Congrats! you're all done! you can now move on to the next tutorial - making a working kernel heap :D. The source code for this tutorial is available here.
+
