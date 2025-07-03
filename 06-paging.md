@@ -137,4 +137,109 @@ u32int kmalloc(u32int sz, int align)
   return tmp;
 }
 ```
+Now, unfortunately, we have one more requirement, and I can't really explain to you why it is required until later in the tutorials. It has to do with when we clone a page directory (when fork()ing processes). At this point, paging will be fully enabled, and kmalloc will return a virtual address. But, we also (bear with me, you'll be glad we did later) need to get the physical address of the memory allocated. Take it on faith for now - it's not much code anyway.
+```c
+u32int kmalloc(u32int sz, int align, u32int *phys)
+{
+  if (align == 1 && (placement_address & 0xFFFFF000)) // If the address is not already page-aligned
+  {
+    // Align it.
+    placement_address &= 0xFFFFF000;
+    placement_address += 0x1000;
+  }
+  if (phys)
+  {
+    *phys = placement_address;
+  }
+  u32int tmp = placement_address;
+  placement_address += sz;
+  return tmp;
+}
+```
+Great. This is all we need for simple memory management. In my code I have actually (for aesthetic purposes) renamed kmalloc to kmalloc_int (for kmalloc_internal). I then have several wrapper functions:
+```c
+u32int kmalloc_a(u32int sz);  // page aligned.
+u32int kmalloc_p(u32int sz, u32int *phys); // returns a physical address.
+u32int kmalloc_ap(u32int sz, u32int *phys); // page aligned and returns a physical address.
+u32int kmalloc(u32int sz); // vanilla (normal).
+```
+I just feel this interface is nicer than specifying 3 parameters for every kernel heap allocation! These definitions should go in kheap.h/kheap.c.
+
+### 6.4.2. Required definitions
+paging.h should contain some structure definitions that will make our life easier.
+```c
+#ifndef PAGING_H
+#define PAGING_H
+
+#include "common.h"
+#include "isr.h"
+
+typedef struct page
+{
+   u32int present    : 1;   // Page present in memory
+   u32int rw         : 1;   // Read-only if clear, readwrite if set
+   u32int user       : 1;   // Supervisor level only if clear
+   u32int accessed   : 1;   // Has the page been accessed since last refresh?
+   u32int dirty      : 1;   // Has the page been written to since last refresh?
+   u32int unused     : 7;   // Amalgamation of unused and reserved bits
+   u32int frame      : 20;  // Frame address (shifted right 12 bits)
+} page_t;
+
+typedef struct page_table
+{
+   page_t pages[1024];
+} page_table_t;
+
+typedef struct page_directory
+{
+   /**
+      Array of pointers to pagetables.
+   **/
+   page_table_t *tables[1024];
+   /**
+      Array of pointers to the pagetables above, but gives their *physical*
+      location, for loading into the CR3 register.
+   **/
+   u32int tablesPhysical[1024];
+   /**
+      The physical address of tablesPhysical. This comes into play
+      when we get our kernel heap allocated and the directory
+      may be in a different location in virtual memory.
+   **/
+   u32int physicalAddr;
+} page_directory_t;
+
+/**
+  Sets up the environment, page directories etc and
+  enables paging.
+**/
+void initialise_paging();
+
+/**
+  Causes the specified page directory to be loaded into the
+  CR3 register.
+**/
+void switch_page_directory(page_directory_t *new);
+
+/**
+  Retrieves a pointer to the page required.
+  If make == 1, if the page-table in which this page should
+  reside isn't created, create it!
+**/
+page_t *get_page(u32int address, int make, page_directory_t *dir);
+
+/**
+  Handler for page faults.
+**/
+void page_fault(registers_t regs);
+```
+Note the `tablesPhysical` and `physicalAddr` members of page_table_t. What are they doing there?
+
+The physicalAddr member is actually only for when we clone page directories (not until later in the tutorials). Remember that at that point, the new directory will have an address in virtual memory that is not the same as physical memory. We will need the physical address to tell the CPU if we ever want to switch directories.
+
+The tablesPhysical member is similar. It is a solution to a problem: How do you access your page tables? It may seem simple, but remember that a page directory must hold physical addresses, not virtual ones. And the only way you can read/write to memory is using virtual addresses!
+
+One solution to this problem is to never access your page tables directly, but to map one page table to point back to the page directory, so that by accessing memory at a certain address you can see all your page tables as if they were pages, and all your page table entries as if they were normal integers. The diagram on the right should help to explain. This method is a little counter-intuitive in my opinion and it also wastes 256MB of addressable space, so I prefer another method.
+
+The second method is to, for every page directory, keep 2 arrays. One holding the physical addresses of it's page tables (for giving to the CPU), and the other holding the virtual ones (so we can read/write to them). This only gives us an extra overhead of 4KB per page directory, which is not much.
 
