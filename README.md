@@ -29,8 +29,8 @@ There is no point, however, in just compiling and running without comprehension.
 There are plenty of resources out there if you know where to look. In particular, you should find these useful:
 
 - [RTFM!](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html) The intel manuals are a godsend
-- The [osdev.org](https://wiki.osdev.org/Expanded_Main_Page) wiki and forums.
-- [Osdever.net](http://www.osdever.net/tutorials/) has many good tutorials and papers, and in particular Bran's kernel development tutorials, which some of the earlier code from this tutorial is based off. (I myself used these tutorials to get started, and the code is so good I haven't had to change it over the years)
+- [OSdev.org](https://wiki.osdev.org/Expanded_Main_Page) wiki and forums.
+- [OSdever.net](http://www.osdever.net/tutorials/) has many good tutorials and papers, and in particular Bran's kernel development tutorials, which some of the earlier code from this tutorial is based off. (I myself used these tutorials to get started, and the code is so good I haven't had to change it over the years)
 - [alt.os.development](https://groups.google.com/g/alt.os.development) can answer many of your non-n00b questions. N00b questions are better asked on the [osdever.net forums.](http://forums.osdever.net/)
 
 #### Copyright - James Molloy - 2008
