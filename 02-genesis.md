@@ -82,27 +82,22 @@ dd start
 Do just that. The MBOOT_* constants are defined above.
 
 **MBOOT_HEADER_MAGIC**
-    
-    A magic number. This identifies the kernel as multiboot-compatible.
+>    A magic number. This identifies the kernel as multiboot-compatible.
 
 **MBOOT_HEADER_FLAGS**
-    
-    A field of flags. We ask for GRUB to page-align all kernel sections
+>   A field of flags. We ask for GRUB to page-align all kernel sections
 (MBOOT_PAGE_ALIGN) and also to give us some memory information (MBOOT_MEM_INFO). Note that some tutorials also use MBOOT_AOUT_KLUDGE. As we are using the ELF file format, this hack is not necessary, and adding it stops GRUB giving you your symbol table when you boot up.
 
 **MBOOT_CHECKSUM**
-    
-    This field is defined such that when the magic number, the flags and
+>    This field is defined such that when the magic number, the flags and
 this are added together, the total must be zero. It is for error checking.
 
 **mboot**
-    
-    The address of the structure that we are currently writing. GRUB uses
+>    The address of the structure that we are currently writing. GRUB uses
 this to tell if we are expecting to be relocated.
 
 **code,bss,end,start**
-    
-    These symbols are all defined by the linker. We use them to tell GRUB
+>    These symbols are all defined by the linker. We use them to tell GRUB
 where the different sections of our kernel can be located.
 
 On bootup, GRUB will load a pointer to another information structure into the EBX register. This can be used to query the environment GRUB set up for us.
