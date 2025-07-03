@@ -77,3 +77,182 @@ u16int inw(u16int port)
    return ret;
 }
 ```
+
+### 3.2.2. The monitor code
+A simple header file:
+```c
+// monitor.h -- Defines the interface for monitor.h
+// From JamesM's kernel development tutorials.
+
+#ifndef MONITOR_H
+#define MONITOR_H
+
+#include "common.h"
+
+// Write a single character out to the screen.
+void monitor_put(char c);
+
+// Clear the screen to all black.
+void monitor_clear();
+
+// Output a null-terminated ASCII string to the monitor.
+void monitor_write(char *c);
+
+#endif // MONITOR_H
+```
+#### 3.2.2.1. Moving the cursor
+To move the hardware cursor, we must firstly work out the linear offset of the x,y cursor coordinate. We do this by using the equation above. Next, we have to send this offset to the VGA controller. For some reason, it accepts the 16-bit location as two bytes. We send the controller's command port (0x3D4) the command 14 to tell it we are sending the high byte, then send that byte to port 0x3D5. We then repeat with the low byte, but send the command 15 instead.
+```c
+// Updates the hardware cursor.
+static void move_cursor()
+{
+   // The screen is 80 characters wide...
+   u16int cursorLocation = cursor_y * 80 + cursor_x;
+   outb(0x3D4, 14);                  // Tell the VGA board we are setting the high cursor byte.
+   outb(0x3D5, cursorLocation >> 8); // Send the high cursor byte.
+   outb(0x3D4, 15);                  // Tell the VGA board we are setting the low cursor byte.
+   outb(0x3D5, cursorLocation);      // Send the low cursor byte.
+}
+```
+#### 3.2.2.2. Scrolling the screen
+At some point we're going to fill up the screen with text. It would be nice if, when we do that, the screen acted like a terminal and scrolled up one line. Actually, this really isn't very difficult to do:
+```c
+// Scrolls the text on the screen up by one line.
+static void scroll()
+{
+
+   // Get a space character with the default colour attributes.
+   u8int attributeByte = (0 /*black*/ << 4) | (15 /*white*/ & 0x0F);
+   u16int blank = 0x20 /* space */ | (attributeByte << 8);
+
+   // Row 25 is the end, this means we need to scroll up
+   if(cursor_y >= 25)
+   {
+       // Move the current text chunk that makes up the screen
+       // back in the buffer by a line
+       int i;
+       for (i = 0*80; i < 24*80; i++)
+       {
+           video_memory[i] = video_memory[i+80];
+       }
+
+       // The last line should now be blank. Do this by writing
+       // 80 spaces to it.
+       for (i = 24*80; i < 25*80; i++)
+       {
+           video_memory[i] = blank;
+       }
+       // The cursor should now be on the last line.
+       cursor_y = 24;
+   }
+}
+```
+#### 3.2.2.3. Writing a character to the screen
+Now the code gets a little more complex. But, if you look at it, you'll see that most of it is logic as to where to put the cursor next - there really isn't much difficult there.
+```c
+// Writes a single character out to the screen.
+void monitor_put(char c)
+{
+   // The background colour is black (0), the foreground is white (15).
+   u8int backColour = 0;
+   u8int foreColour = 15;
+
+   // The attribute byte is made up of two nibbles - the lower being the
+   // foreground colour, and the upper the background colour.
+   u8int  attributeByte = (backColour << 4) | (foreColour & 0x0F);
+   // The attribute byte is the top 8 bits of the word we have to send to the
+   // VGA board.
+   u16int attribute = attributeByte << 8;
+   u16int *location;
+
+   // Handle a backspace, by moving the cursor back one space
+   if (c == 0x08 && cursor_x)
+   {
+       cursor_x--;
+   }
+
+   // Handle a tab by increasing the cursor's X, but only to a point
+   // where it is divisible by 8.
+   else if (c == 0x09)
+   {
+       cursor_x = (cursor_x+8) & ~(8-1);
+   }
+
+   // Handle carriage return
+   else if (c == '\r')
+   {
+       cursor_x = 0;
+   }
+
+   // Handle newline by moving cursor back to left and increasing the row
+   else if (c == '\n')
+   {
+       cursor_x = 0;
+       cursor_y++;
+   }
+   // Handle any other printable character.
+   else if(c >= ' ')
+   {
+       location = video_memory + (cursor_y*80 + cursor_x);
+       *location = c | attribute;
+       cursor_x++;
+   }
+
+   // Check if we need to insert a new line because we have reached the end
+   // of the screen.
+   if (cursor_x >= 80)
+   {
+       cursor_x = 0;
+       cursor_y ++;
+   }
+
+   // Scroll the screen if needed.
+   scroll();
+   // Move the hardware cursor.
+   move_cursor();
+}
+```
+See? It's pretty simple! The bit that actually does the writing is here:
+```c
+location = video_memory + (cursor_y*80 + cursor_x);
+*location = c | attribute;
+```
+
+
+Set 'location' to point to the linear address of the word corresponding to the current cursor position (see equation above).Set the value at 'location' to be the logical-OR of the character and 'attribute'. Remember that we shifted 'attribute' left 8 bits above, so actually we're just setting 'c' as the lower byte of 'attribute'.
+
+#### 3.2.2.4. Clearing the screen
+Clearing the screen is also dead easy. Just fill it with loads of spaces:
+```c
+// Clears the screen, by copying lots of spaces to the framebuffer.
+void monitor_clear()
+{
+   // Make an attribute byte for the default colours
+   u8int attributeByte = (0 /*black*/ << 4) | (15 /*white*/ & 0x0F);
+   u16int blank = 0x20 /* space */ | (attributeByte << 8);
+
+   int i;
+   for (i = 0; i < 80*25; i++)
+   {
+       video_memory[i] = blank;
+   }
+
+   // Move the hardware cursor back to the start.
+   cursor_x = 0;
+   cursor_y = 0;
+   move_cursor();
+}
+```
+
+#### 3.2.2.5. Writing a string
+```c
+// Outputs a null-terminated ASCII string to the monitor.
+void monitor_write(char *c)
+{
+   int i = 0;
+   while (c[i])
+   {
+       monitor_put(c[i++]);
+   }
+}
+```
