@@ -1,9 +1,7 @@
 # 5. IRQs and the PIT
-
 In this chapter we're going to be learning about interrupt requests (IRQs) and the programmable interval timer (PIT).
 
 ## 5.1. Interrupt requests (theory)
-
 There are several methods for communicating with external devices. Two of the most useful and popular are polling and interrupting.
 
 **Polling**
@@ -244,7 +242,7 @@ init_timer(50); // Initialise timer to 50Hz
 
 <img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/irqs_and_the_pit_bochs.png" >
 
-You should get output like that on. Note however that bochs does not accurately emulate the timer chip, so although your code will run at the correct speed on a real machine, it probably won't in bochs!
+You should get output like that. Note however that bochs does not accurately emulate the timer chip, so although your code will run at the correct speed on a real machine, it probably won't in bochs!
 
 Full source code for this tutorial can be found [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/irqs_and_the_pit.tar.gz).
 
