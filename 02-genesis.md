@@ -107,3 +107,91 @@ So, immediately on bootup, the asm snippet tells the CPU to push the contents of
 
 All is good, but the code won't link yet. We haven't defined main()!
 
+## 2.3. Adding some C code
+Interfacing C code and assembly is dead easy. You just have to know the calling convention used. GCC on x86 uses the __cdecl calling convention:
+- All parameters to a function are passed on the stack.
+- The parameters are pushed right-to-left.
+- The return value of a function is returned in EAX.
+
+...so the function call:
+```c
+d = func(a, b, c);
+```
+Becomes:
+```assembly
+push [c]
+push [b]
+push [a]
+call func
+mov [d], eax
+```
+See? nothing to it! So, you can see that in our asm snippet above, that 'push ebx' is actually passing the value of ebx as a parameter to the function main()
+
+### 2.3.1. The C code
+```c
+// main.c -- Defines the C-code kernel entry point, calls initialisation routines.
+// Made for JamesM's tutorials
+
+int main(struct multiboot *mboot_ptr)
+{
+  // All our initialisation calls will go in here.
+  return 0xDEADBABA;
+}
+```
+Here's our first incarnation of the main() function. As you can see, we've made it take one parameter - a pointer to a multiboot struct. We'll define that later (we don't actually need to define it for the code to compile!).
+
+All the function does is return a constant - 0xDEADBABA. That constant is unusual enough that it should stand out at you when we run the program in a second.
+
+## 2.4. Compiling, linking and running!
+Now that we've added a new file to our project, we have to add it to the makefile also. Edit these lines:
+```
+SOURCES=boot.o
+CFLAGS=
+```
+To become:
+```
+SOURCES=boot.o main.o
+CFLAGS=-nostdlib -nostdinc -fno-builtin -fno-stack-protector
+```
+We must stop GCC trying to link your linux C library with our kernel - it won't work at all (yet). That's what those CFLAGS are for.
+
+OK, you should now be able to compile, link and run your kernel!
+```bash
+cd src
+make clean  # Ignore any errors here.
+make
+cd ..
+./update_image.sh
+./run_bochs.sh  # This may ask your for your root password.
+```
+That should cause bochs to boot, you'll see GRUB for a few seconds then the kernel will run. It doesn't actually do anything, so it'll just freeze, saying 'starting up...'.
+
+If you open bochsout.txt, at the bottom you should see something like:
+```
+00074621500i[CPU  ] | EAX=deadbaba  EBX=0002d000  ECX=0001edd0 EDX=00000001
+00074621500i[CPU  ] | ESP=00067ec8  EBP=00067ee0  ESI=00053c76 EDI=00053c77
+00074621500i[CPU  ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf zf af pf cf
+00074621500i[CPU  ] | SEG selector     base    limit G D
+00074621500i[CPU  ] | SEG sltr(index|ti|rpl)     base    limit G D
+00074621500i[CPU  ] |  CS:0008( 0001| 0|  0) 00000000 000fffff 1 1
+00074621500i[CPU  ] |  DS:0010( 0002| 0|  0) 00000000 000fffff 1 1
+00074621500i[CPU  ] |  SS:0010( 0002| 0|  0) 00000000 000fffff 1 1
+00074621500i[CPU  ] |  ES:0010( 0002| 0|  0) 00000000 000fffff 1 1
+00074621500i[CPU  ] |  FS:0010( 0002| 0|  0) 00000000 000fffff 1 1
+00074621500i[CPU  ] |  GS:0010( 0002| 0|  0) 00000000 000fffff 1 1
+00074621500i[CPU  ] | EIP=00100027 (00100027)
+00074621500i[CPU  ] | CR0=0x00000011 CR1=0 CR2=0x00000000
+00074621500i[CPU  ] | CR3=0x00000000 CR4=0x00000000
+00074621500i[CPU  ] >> jmp .+0xfffffffe (0x00100027) : EBFE
+```
+Notice what the value of EAX is? 0xDEADBABA - the return value of main().
+
+Congratulations, you now have a multiboot compatible assembly trampoline, and you're ready to start printing to the screen!
+
+Sample code for this tutorial can be found here
+
+
+
+
+
+
