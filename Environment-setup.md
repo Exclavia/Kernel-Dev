@@ -17,4 +17,54 @@ The examples in this tutorial should compile successfully with the GNU toolchain
 
 This tutorial is not a bootloader tutorial. We will be using [GRUB](https://www.gnu.org/software/grub/) to load our kernel. To do this, we need a floppy disk image with GRUB preloaded onto it. There are tutorials to do this, but, happily, I have made a standard image, which can be found [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/floppy.img). [^1] This goes in your 'tutorial' (or whatever you named it) directory.
 
+## 1.3. Running
+There is no alternative for bare hardware as a testbed system. Unfortunately, bare hardware is pretty pants at telling you where things went wrong (but of course, you're going to write completely bug-free code first time, aren't you?). Enter [Bochs](https://bochs.sourceforge.io/). Bochs is an open-source x86-64 emulator. When things go completely awry, bochs will tell you, and store the processor state in a logfile, which is extremely useful. Also it can be run and rebooted much faster than a real machine. My examples will be made to run well on bochs.
+
+## 1.4. Bochs
+In order to run bochs, you are going to need a bochs configuration file ([bochsrc.txt](https://github.com/Exclavia/Kernel-Dev/blob/main/files/bochsrc.txt)). [^2] Coincidentally, a sample one is included below!
+
+Take care with the locations of the bios files. These seem to change between installations, and if you made bochs from source it is very likely you don't even have them. Google their filenames, you can get them from the official bochs site among others.
+```
+megs: 32
+romimage: file=/usr/share/bochs/BIOS-bochs-latest, address=0xf0000
+vgaromimage: /usr/share/bochs/VGABIOS-elpin-2.40
+floppya: 1_44=/dev/loop0, status=inserted
+boot: a
+log: bochsout.txt
+mouse: enabled=0
+clock: sync=realtime
+cpu: ips=500000
+```
+This will make bochs emulate a 32MB machine with a clock speed similar to a 350MHz PentiumII. The instructions per second can be cranked up - I prefer a slower emulation speed, simply so I can see what is going on if lots of text is being scrolled.
+
+## 1.5. Useful scripts
+We are going to be doing several things very often - making (compiling and linking) our project, and transferring the resulting kernel binary to our floppy disk image.
+### 1.5.1. Makefile
+```
+# Makefile for JamesM's kernel tutorials.
+# The C and C++ rules are already setup by default.
+# The only one that needs changing is the assembler
+# rule, as we use nasm instead of GNU as.
+
+SOURCES=boot.o
+
+CFLAGS=
+LDFLAGS=-Tlink.ld
+ASFLAGS=-felf
+
+all: $(SOURCES) link 
+
+clean:
+ »  -rm *.o kernel
+
+link:
+ »  ld $(LDFLAGS) -o kernel $(SOURCES)
+
+.s.o:
+ »  nasm $(ASFLAGS) $<
+```
+This Makefile will compile every file in SOURCES, then link them together into one ELF binary, 'kernel'. It uses a linker script, 'link.ld' to do this:
+
+
 [^1]: Assumed to be original referenced file. See files [README](https://github.com/Exclavia/Kernel-Dev/blob/main/files/README.md) for more info.
+[^2]: Alternative version with slight differences also available [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/alt_bochsrc.txt)
