@@ -487,5 +487,4 @@ int main(struct multiboot *mboot_ptr)
 This will, obviously, initialise paging, print a string to make sure it's set up right and not faulting when it shoudn't, and then force a page fault by reading location 0xA0000000.
 
 
-Congrats! you're all done! you can now move on to the next tutorial - making a working kernel heap :D. The source code for this tutorial is available here.
-
+Congrats! you're all done! you can now move on to the next tutorial - making a working kernel heap :D. The source code for this tutorial is available [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/paging.tar.gz).
