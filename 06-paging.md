@@ -64,4 +64,23 @@ The fields in that picture are pretty simple, so let's quickly go through them.
 **Page frame address**
 > The high 20 bits of the frame address in physical memory.
 
+### 6.2.2. Page directories/tables
+<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/page_directory_2.png" >
+Possibly you've been tapping on your calculator and have worked out that to generate a table mapping each 4KB page to one 32-bit descriptor over a 4GB address space requires 4MB of memory. Perhaps, perhaps not - but it's true.
 
+4MB may seem like a large overhead, and to be fair, it is. If you have 4GB of physical RAM, it's not much. However, if you are working on a machine that has 16MB of RAM, you've just lost a quarter of your available memory! What we want is something progressive, that will take up an amount of space proportionate to the amount of RAM you have.
+
+Well, we don't have that. But intel did come up with something similar - they use a 2-tier system. The CPU gets told about a page directory, which is a 4KB large table, each entry of which points to a page table. The page table is, again, 4KB large and each entry is a page table entry, described above.
+
+This way, The entire 4GB address space can be covered with the advantage that if a page table has no entries, it can be freed and it's present flag unset in the page directory.
+
+### 6.2.3. Enabling paging
+Enabling paging is extremely easy.
+
+1. Copy the location of your page directory into the CR3 register. This must, of course, be the physical address.
+2. Set the PG bit in the CR0 register. You can do this by OR-ing with 0x80000000.
+
+## 6.3. Page faults
+When a process does something the memory-management unit doesn't like, a page fault interrupt is thrown. Situations that can cause this are (not complete):
+
+Reading from or writing to an area of memory that is not mapped (page entry/table's 'present' flag is not set)The process is in user-mode and tries to write to a read-only page.The process is in user-mode and tries to access a kernel-only page.The page table entry is corrupted - the reserved bits have been overwritten.
