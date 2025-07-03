@@ -1,5 +1,6 @@
 # James Molloy - Kernel Development Tutorials
 A clone of James Molloy's Kernel Development tutorials, grabbed via WayBack archive circa. 2021 (As of July 2025 the website seems to be down.)
+- [Original Website](http://www.jamesmolloy.co.uk/tutorial_html/)
 
 ## Roll your own toy UNIX-clone OS
 This set of tutorials aims to take you through programming a simple UNIX-clone operating system for the x86 architecture. The tutorial uses C as the language of choice, with liberally mixed in bits of assembler. The aim is to talk you through the design and implementation decisions in making an operating system. The OS we make is monolithic in design (drivers are loaded through kernel-mode modules as opposed to user-mode programs), as this is simpler.
@@ -30,3 +31,9 @@ There are plenty of resources out there if you know where to look. In particula
 - The [osdev.org](https://wiki.osdev.org/Expanded_Main_Page) wiki and forums.
 - [Osdever.net](http://www.osdever.net/tutorials/) has many good tutorials and papers, and in particular Bran's kernel development tutorials, which some of the earlier code from this tutorial is based off. (I myself used these tutorials to get started, and the code is so good I haven't had to change it over the years)
 - [alt.os.development](https://groups.google.com/g/alt.os.development) can answer many of your non-n00b questions. N00b questions are better asked on the [osdever.net forums.](http://forums.osdever.net/)
+
+#### Copyright - James Molloy - 2008
+***james@jamesmolloy.co.uk***
+
+## Additional Notes
+This repository is solely for the purpose of preserving these tutorials so that future developers may use them. **I do not claim to be the owner, nor author of these tutorials.** That solely goes to **James Molloy**. If they, James Molloy, do not want this repository publicized, it is within their full rights to request that I takedown the repository. I will comply with any takedown requests made by James Molloy. *Any questions or requests related to this repository can be sent via messages on Github or via email:* ***git@exclavia.network***
