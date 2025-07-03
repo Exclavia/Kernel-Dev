@@ -256,3 +256,32 @@ void monitor_write(char *c)
    }
 }
 ```
+
+## 3.3. Summary
+If you put all that code together, you can add a couple of lines to your main.c file:
+```c
+monitor_clear();
+monitor_write("Hello, world!");
+```
+Et voila - a text output function! Not bad for a couple of minutes' work, eh?
+
+## 3.4. Extensions
+Apart from implementing memcpy/memset/strlen/strcmp etc, there are a few other functions that will make life easier for you.
+```c
+void monitor_write_hex(u32int n)
+{
+   // TODO: implement this yourself!
+}
+
+void monitor_write_dec(u32int n)
+{
+   // TODO: implement this yourself!
+}
+```
+The function names should be pretty self explanatory -- writing in hexadecimal really is required if you're going to check the validity of pointers. Decimal is optional but it's nice to see something in base 10 every once in a while!
+
+<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/the_screen_screenshot.png">
+
+You could also have a scout at the linux0.1 code - that has an implementation of vsprintf which is quite neat and tidy. You could copy that function then use it to implement printf(), which will make your life a hell of a lot easier when it comes to debugging.
+
+Source code for this tutorial is available [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/the_screen.tar.gz)
