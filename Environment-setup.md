@@ -126,4 +126,4 @@ sudo /sbin/losetup -d /dev/loop0
 ```
 
 [^1]: Assumed to be original referenced file. See files [README](https://github.com/Exclavia/Kernel-Dev/blob/main/files/README.md) for more info.
-[^2]: Alternative version with slight differences also available [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/alt_bochsrc.txt)
+[^2]: Alternative version also available [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/alt/)
