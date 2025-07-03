@@ -65,7 +65,7 @@ link:
 ```
 This Makefile will compile every file in SOURCES, then link them together into one ELF binary, 'kernel'. It uses a linker script, 'link.ld' to do this.
 ### 1.5.2. Link.ld
-```
+```assembly
 /* Link.ld -- Linker script for the kernel - ensure everything goes in the */
 /*            Correct place.  */
 /*            Original file taken from Bran's Kernel Development */
@@ -103,7 +103,7 @@ This script tells LD how to set up our kernel image. Firstly it tells LD that th
 
 ### 1.5.3. update_image.sh
 A nice little script that will poke your new kernel binary into the floppy image file (This assumes you have made a directory /mnt). Note: you will need /sbin in your $PATH to use losetup.
-```
+```sh
 #!/bin/bash
 
 sudo losetup /dev/loop0 floppy.img
@@ -114,7 +114,7 @@ sudo losetup -d /dev/loop0
 ```
 ### 1.5.4. run_bochs.sh
 This script will setup a loopback device, run bochs on it, then disconnect it.
-```
+```sh
 #!/bin/bash
 
 # run_bochs.sh
