@@ -31,3 +31,19 @@ Notice that each also has a 'magic number' field. This is for error checking, an
 
 Note also that within this tutorial I will refer to the size of a block being the number of bytes from the start of the header to the end of the footer - so within a block of size x, there will be x - sizeof(header_t) - sizeof(footer_t) user-useable bytes.
 
+## 7.2. Algorithm description
+### 7.2.1. Allocation
+Allocation is straightforward, if a little long-winded. Most of the steps are error-checking and creating new holes to minimise memory leaks.
+
+1. Search the index table to find the smallest hole that will fit the requested size. As the table is ordered, this just entails iterating through until we find a hole which will fit.
+      If we didn't find a hole large enough, then:
+      1. Expand the heap.
+      2. If the index table is empty (no holes have been recorded) then add a new entry to it.
+      3. Else, adjust the last header's size member and rewrite the footer.
+      4. To ease the number of control-flow statements, we can just recurse and call the allocation function again, trusting that this time there will be a hole large enough.
+2. Decide if the hole should be split into two parts. This will normally be the case - we usually will want much less space than is available in the hole. The only time this will not happen is if there is less free space after allocating the block than the header/footer takes up. In this case we can just increase the block size and reclaim it all afterwards.
+3. If the block should be page-aligned, we must alter the block starting address so that it is and create a new hole in the new unused area.
+   If it is not, we can just delete the hole from the index.
+4. Write the new block's header and footer.
+5. If the hole was to be split into two parts, do it now and write a new hole into the index.
+6. Return the address of the block + sizeof(header_t) to the user.
