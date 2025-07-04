@@ -1,3 +1,5 @@
+<h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/06-paging.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/08-vfs-and-initrd.md">Next Chapter -></a></p></h4>
+
 # 7. The Heap
 In order to be responsive to situations that you didn't envisage at the design stage, and to cut down the size of your kernel, you will need some kind of dynamic memory allocation. The current memory allocation system (allocation by placement address) is absolutely fine, and is in fact optimal for both time and space for allocations. The problem occurs when you try to free some memory, and want to reclaim it (this must happen eventually, otherwise you will run out!). The placement mechanism has absolutely no way to do this, and is thus not viable for the majority of kernel allocations.
 
@@ -738,3 +740,8 @@ Dynamic memory allocation is one of the few things that it is very difficult to 
 
 
 Sample code, as ever, can be found [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/the_heap.tar.gz).
+
+
+
+<br><br><br><br><br><br><br>
+## <h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/06-paging.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/08-vfs-and-initrd.md">Next Chapter -></a></p></h4>
