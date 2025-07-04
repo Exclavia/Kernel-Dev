@@ -20,7 +20,7 @@ The other clever thing about the PIC is that you can change the interrupt number
 - IRQ 0..7 - INT 0x8..0xF
 - IRQ 8..15 - INT 0x70..0x77
 
-This causes us somewhat of a problem. The master's IRQ mappings (0x8-0xF) conflict with the interrupt numbers used by the CPU to signal exceptions and faults (see last [chapter](https://github.com/Exclavia/Kernel-Dev/blob/main/04-gdt-and-idt.md)). The normal thing to do is to remap the PICs so that IRQs 0..15 correspond to ISRs 32..47 (31 being the last CPU-used ISR).
+This causes us somewhat of a problem. The master's IRQ mappings (0x8-0xF) conflict with the interrupt numbers used by the CPU to signal exceptions and faults (see last [chapter](https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/04-gdt-and-idt.md)). The normal thing to do is to remap the PICs so that IRQs 0..15 correspond to ISRs 32..47 (31 being the last CPU-used ISR).
 
 ## 5.2. Interrupt requests (practical)
 The PICs are communicated with via the I/O bus. Each has a command port and a data port:
