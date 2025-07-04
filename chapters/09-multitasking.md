@@ -1,3 +1,5 @@
+<h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/08-vfs-and-initrd.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/10-user-mode.md">Next Chapter -></a></p></h4>
+
 # 9. Multitasking
 Eventually most people want to have their OS run two things (seemingly) at once. This is called multitasking, and is in my opinion one of the final hurdles before you can call your project an 'operating system' or 'kernel'.
 
@@ -650,10 +652,13 @@ int main(struct multiboot *mboot_ptr, u32int initial_stack)
 }
 ```
 ## 9.6. Summary
-<img align="right" width="500" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/multitasking_bochs.png" >
+<img align="right" width="450" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/multitasking_bochs.png" >
 
 Multitasking is really one of the final hurdles to creating a "proper" kernel. Giving the user the appearance of being able to run multiple things concurrently is essential to any modern OS.
 
 Full source code is available [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/multitasking.tar.gz).
 
 
+
+<br><br><br><br><br><br><br>
+## <h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/08-vfs-and-initrd.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/10-user-mode.md">Next Chapter -></a></p></h4>
