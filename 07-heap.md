@@ -327,5 +327,135 @@ if ((location+sizeof(header_t)) & 0xFFFFF000 != 0)
 It's important to note that when the user requests memory to be page-aligned, he is requesting the memory that he has access to to be page-aligned. That means that the header address will actually not be page-aligned. The address that we want to fall on a boundary is location + sizeof(header_t).
 
 Creating a heap is a simple procedure. The only part worthy of note is that we set aside the first HEAP_INDEX_SIZE*sizeof(type_t) bytes as the index. The index is put there using place_ordered_array, and the effective start address is shifted forwards. That is why, when testing your kernel, you will see allocations starting at 0xC0080000 instead of the more obvious 0xC0000000. Also note that we create a custom less_than function for the index array. This is because with the standard less_than function the array would be sorted by pointer address, instead of by size.
+```c
+static s8int header_t_less_than(void*a, void *b)
+{
+   return (((header_t*)a)->size < ((header_t*)b)->size)?1:0;
+}
 
+heap_t *create_heap(u32int start, u32int end_addr, u32int max, u8int supervisor, u8int readonly)
+{
+   heap_t *heap = (heap_t*)kmalloc(sizeof(heap_t));
+
+   // All our assumptions are made on startAddress and endAddress being page-aligned.
+   ASSERT(start%0x1000 == 0);
+   ASSERT(end_addr%0x1000 == 0);
+
+   // Initialise the index.
+   heap->index = place_ordered_array( (void*)start, HEAP_INDEX_SIZE, &header_t_less_than);
+
+   // Shift the start address forward to resemble where we can start putting data.
+   start += sizeof(type_t)*HEAP_INDEX_SIZE;
+
+   // Make sure the start address is page-aligned.
+   if (start & 0xFFFFF000 != 0)
+   {
+       start &= 0xFFFFF000;
+       start += 0x1000;
+   }
+   // Write the start, end and max addresses into the heap structure.
+   heap->start_address = start;
+   heap->end_address = end_addr;
+   heap->max_address = max;
+   heap->supervisor = supervisor;
+   heap->readonly = readonly;
+
+   // We start off with one large hole in the index.
+   header_t *hole = (header_t *)start;
+   hole->size = end_addr-start;
+   hole->magic = HEAP_MAGIC;
+   hole->is_hole = 1;
+   insert_ordered_array((void*)hole, &heap->index);
+
+   return heap;
+}
+```
+#### 7.4.2.1. Expansion and contraction
+At points we will need to alter the size of our heap. If we run out of space, we will need more. If we reclaim space, we may need less.
+```c
+static void expand(u32int new_size, heap_t *heap)
+{
+   // Sanity check.
+   ASSERT(new_size > heap->end_address - heap->start_address);
+   // Get the nearest following page boundary.
+   if (new_size&0xFFFFF000 != 0)
+   {
+       new_size &= 0xFFFFF000;
+       new_size += 0x1000;
+   }
+   // Make sure we are not overreaching ourselves.
+   ASSERT(heap->start_address+new_size <= heap->max_address);
+
+   // This should always be on a page boundary.
+   u32int old_size = heap->end_address-heap->start_address;
+   u32int i = old_size;
+   while (i < new_size)
+   {
+       alloc_frame( get_page(heap->start_address+i, 1, kernel_directory),
+                    (heap->supervisor)?1:0, (heap->readonly)?0:1);
+       i += 0x1000 /* page size */;
+   }
+   heap->end_address = heap->start_address+new_size;
+}
+```
+I think that code is self-explanatory. A few assertions are made, and the new_size parameter is changed so that it falls on a page boundary. Frames are then allocated one-by-one according to the parameters given when creating the heap (supervisor mode enabled?, read only access?).
+```c
+static u32int contract(u32int new_size, heap_t *heap)
+{
+   // Sanity check.
+   ASSERT(new_size < heap->end_address-heap->start_address);
+   // Get the nearest following page boundary.
+   if (new_size&0x1000)
+   {
+       new_size &= 0x1000;
+       new_size += 0x1000;
+   }
+   // Don't contract too far!
+   if (new_size < HEAP_MIN_SIZE)
+       new_size = HEAP_MIN_SIZE;
+   u32int old_size = heap->end_address-heap->start_address;
+   u32int i = old_size - 0x1000;
+   while (new_size < i)
+   {
+       free_frame(get_page(heap->start_address+i, 0, kernel_directory));
+       i -= 0x1000;
+   }
+   heap->end_address = heap->start_address + new_size;
+   return new_size;
+}
+```
+Similarly to expand, new_size is adjusted so it sits on a page boundary. We then check that we're not trying to contract past our minimum size, and free each frame in turn until we reach the desired size.
+
+#### 7.4.2.2. Allocation
+
+We'll talk through the allocation function in parts.
+```c
+void *alloc(u32int size, u8int page_align, heap_t *heap)
+{
+
+   // Make sure we take the size of header/footer into account.
+   u32int new_size = size + sizeof(header_t) + sizeof(footer_t);
+   // Find the smallest hole that will fit.
+   s32int iterator = find_smallest_hole(new_size, page_align, heap);
+   
+   if (iterator == -1) // If we didn't find a suitable hole
+   {
+     ... // Will be filled in in a second.
+   }
+```
+Here we adjust the requested block size to account for the size of the header and footer. We then request the smallest hole available that will fit using our find_smallest_hole function. If we couldn't find one (find_smallest_hole() == -1), we go into some error-handling code. It's a bit beefy, so I'll come back to this to explain it.
+```c
+   header_t *orig_hole_header = (header_t *)lookup_ordered_array(iterator, &heap->index);
+   u32int orig_hole_pos = (u32int)orig_hole_header;
+   u32int orig_hole_size = orig_hole_header->size;
+   // Here we work out if we should split the hole we found into two parts.
+   // Is the original hole size - requested hole size less than the overhead for adding a new hole?
+   if (orig_hole_size-new_size < sizeof(header_t)+sizeof(footer_t))
+   {
+       // Then just increase the requested size to the size of the hole we found.
+       size += orig_hole_size-new_size;
+       new_size = orig_hole_size;
+   }
+```
+Here we get the header pointer from the index given us by find_smallest_hole. We then save the address and size of this header in case we need to overwrite it later. After this, we decide if it is worth splitting the hole in two (that is, will the free space be able to fit another hole into it?) If not, we increase the requested size to the hole size, so it isn't split.
 
