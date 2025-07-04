@@ -14,8 +14,8 @@ This relies on several things:
 2. The task switch code can be run seamlessly when changing address spaces. The task switch code should be able to change address spaces and then continue executing as if nothing happened. This means that the kernel code must be mapped in at the same place in all address spaces.
 
 ### 9.1.1. Some notes about address spaces
+<img align="right" width="200" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/tasking_fork.png" >
 A lot of the complication in implementing multitasking is not just the context switching - a new address space must be created for each task. The complication is that some parts of the address space must be copied, and others must be linked. That is, two pages point to the same frame in physical memory. 
-<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/tasking_fork.png" >
 
 Take the example layout - The picture shows two virtual address spaces and how areas are mapped to an example physical RAM layout.
 
