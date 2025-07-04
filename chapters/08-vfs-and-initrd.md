@@ -1,3 +1,5 @@
+<h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/07-heap.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/09-multitasking.md">Next Chapter -></a></p></h4>
+
 # 8. The VFS and the initrd
 In this chapter we're going to be starting work on our virtual filesystem (VFS). As a baptism of fire, we will also be implementing an initial ramdisk so you can load configuration files or executables to your kernel.
 
@@ -510,6 +512,14 @@ cd ..
 ./update_image.sh
 ./run_bochs.sh
 ```
+
 <img align="right" width="500" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/the_vfs_and_initrd_bochs.png" >
 
+
 The code for this tutorial can be found [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/the_vfs_and_initrd.tar.gz).
+
+
+
+
+<br><br><br><br><br><br><br><br><br><br>
+## <h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/07-heap.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/09-multitasking.md">Next Chapter -></a></p></h4>
