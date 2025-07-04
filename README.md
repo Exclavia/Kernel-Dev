@@ -10,16 +10,17 @@ This set of tutorials aims to take you through programming a simple UNIX-clone o
 This set of tutorials is very practical in nature. The theory is given in every section, but the majority of the tutorial deals with getting dirty and implementing the abstract ideas and mechanisms discussed everywhere. It is important to note that the kernel implemented is a teaching kernel. I know that the algorithms used are not the most space efficient or optimal. They normally are chosen for their simplicity and ease of understanding.The aim of this is to get you into the correct mindset, and to give you a grounding upon which you can work. The kernel given is extensible, and good algorithms can easily be plugged in.If you have problems with the theory, there are plenty of sites that would be delighted to help you (most questions on OSDev forums are concerned with implementation - "My gets function doesn't work! help!" - A theory question is a breath of fresh air to many ;) ). Links can be found at the bottom of the page.
 
 ### Table of contents
-1. [Environment setup](https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/01-environment-setup.md)
-2. [Genesis](https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/02-genesis.md)
-3. [The Screen](https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/03-screen.md)
-4. [The GDT and IDT](https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/04-gdt-and-idt.md)
-5. [IRQs and the PIT](https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/05-irq-and-pit.md)
-6. [Paging](https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/06-paging.md)
-7. [The Heap](https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/07-heap.md)
-8. [The VFS and the initrd](https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/08-vfs-and-initrd.md)
-9. [Multitasking](https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/09-multitasking.md)
-10. [User Mode](https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/10-user-mode.md)
+1. [Environment setup](/chapters/01-environment-setup.md)
+2. [Genesis](/chapters/02-genesis.md)
+3. [The Screen](/chapters/03-screen.md)
+4. [The GDT and IDT](/chapters/04-gdt-and-idt.md)
+5. [IRQs and the PIT](/chapters/05-irq-and-pit.md)
+6. [Paging](/chapters/06-paging.md)
+7. [The Heap](/chapters/07-heap.md)
+8. [The VFS and the initrd](/chapters/08-vfs-and-initrd.md)
+9. [Multitasking](/chapters/09-multitasking.md)
+10. [User Mode](/chapters/10-user-mode.md)
+
 
 ### Prerequisites
 To compile and run the sample code I provide requires just [GCC](https://gcc.gnu.org/), [ld](https://www.gnu.org/software/binutils/), [NASM](https://www.nasm.us/) and [GNU Make](https://www.gnu.org/software/make/). NASM is an open-source x86 assembler, and is the assembler-of-choice for many x86 OS-devs.
