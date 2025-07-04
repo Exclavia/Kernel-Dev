@@ -188,7 +188,7 @@ If you open bochsout.txt, at the bottom you should see something like:
 ```
 
 
-<img align="right" width="500" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/genesis_bochs.png">
+<img align="right" width="450" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/genesis_bochs.png">
 
 
 Notice what the value of EAX is? 0xDEADBABA - the return value of main().
