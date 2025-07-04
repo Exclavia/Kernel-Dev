@@ -2,9 +2,9 @@
 In this chapter we're going to be starting work on our virtual filesystem (VFS). As a baptism of fire, we will also be implementing an initial ramdisk so you can load configuration files or executables to your kernel.
 
 ## 8.1. The virtual filesystem
-A VFS is intended to abstract away details of the filesystem and location that files are stored, and to give access to them in a uniform manner. They are usually implemented as a graph of nodes; 
-<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/vfs.png" >
+<img align="right" width="200" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/vfs.png" >
 
+A VFS is intended to abstract away details of the filesystem and location that files are stored, and to give access to them in a uniform manner. They are usually implemented as a graph of nodes; 
 Each node representing either a file, directory, symbolic link, device, socket or pipe. Each node should know what filesystem it belongs to and have enough information such that the relavent open/close/etc functions in its driver can be found and executed. A common way to accomplish this is to have the node store function pointers which can be called by the kernel. We'll need a few function pointers:
 - Open - Called when a node is opened as a file descriptor.
 - Close - Called when the node is closed.
@@ -69,9 +69,9 @@ typedef struct fs_node
 } fs_node_t;
 ```
 ### 8.1.1. Mountpoints
-Mountpoints are the UNIX way of accessing different filesystems. A filesystem is mounted on a directory - any subsequent access to that directory will actually access the root directory of the new filesystem.
-<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/vfs_mountpoint.png" >
+<img align="right" width="200" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/vfs_mountpoint.png" >
 
+Mountpoints are the UNIX way of accessing different filesystems. A filesystem is mounted on a directory - any subsequent access to that directory will actually access the root directory of the new filesystem.
 So essentially the directory is told that it is a mountpoint and given a pointer to the root node of the new filesystem. We can actually reuse the ptr member of fs_node_t for this purpose (as it is currently only used for symlinks and they can never be mountpoints).
 
 ### 8.1.2. Implementation
@@ -510,6 +510,6 @@ cd ..
 ./update_image.sh
 ./run_bochs.sh
 ```
-<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/the_vfs_and_initrd_bochs.png" >
+<img align="right" width="500" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/the_vfs_and_initrd_bochs.png" >
 
 The code for this tutorial can be found [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/the_vfs_and_initrd.tar.gz).
