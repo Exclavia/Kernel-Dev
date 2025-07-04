@@ -651,7 +651,7 @@ int main(struct multiboot *mboot_ptr, u32int initial_stack)
 ```
 ## 9.6. Summary
 Multitasking is really one of the final hurdles to creating a "proper" kernel. Giving the user the appearance of being able to run multiple things concurrently is essential to any modern OS.
-<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/multitasking_bochs.png >
+<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/multitasking_bochs.png" >
 
 Full source code is available [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/multitasking.tar.gz).
 
