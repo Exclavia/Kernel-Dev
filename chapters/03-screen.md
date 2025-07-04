@@ -13,8 +13,7 @@ The framebuffer is just an array of 16-bit words, each 16-bit value representing
 ```
 What's important to note is that the '* 2' is there only because each element is 2 bytes (16 bits) long. If you're indexing an array of 16-bit values, for example, your index would just be y*80+x.
 
-<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/the_screen_word_format.png">
-
+<img align="right" width="300" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/the_screen_word_format.png">
 In ASCII (unicode is not supported in text mode), 8 bits are used to represent a character. That gives us 8 more bits which are unused. The VGA hardware uses these to designate foreground and background colours (4 bits each). The splitting of this 16-bit value is shown in the diagram to the right.
 
 4 bits for a colour code gives us 15 possible colours we can display:
@@ -280,7 +279,9 @@ void monitor_write_dec(u32int n)
 ```
 The function names should be pretty self explanatory -- writing in hexadecimal really is required if you're going to check the validity of pointers. Decimal is optional but it's nice to see something in base 10 every once in a while!
 
-<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/the_screen_screenshot.png">
+
+<img align="right" width="500" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/the_screen_screenshot.png">
+
 
 You could also have a scout at the linux0.1 code - that has an implementation of vsprintf which is quite neat and tidy. You could copy that function then use it to implement printf(), which will make your life a hell of a lot easier when it comes to debugging.
 
