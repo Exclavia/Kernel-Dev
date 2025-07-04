@@ -392,5 +392,5 @@ If you keep getting page faults when jumping to user mode, make sure that your k
 
 
 
-<br><br><br><br><br><br><br>
+<br><br><br><br>
 ## <h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/09-multitasking.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a></p></h4>
