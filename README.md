@@ -43,4 +43,4 @@ This repository is solely for the purpose of preserving these tutorials so that 
 ### Changes made / Submitting errors
 The repository has some slight changes to it that may differ it from the original tutorial. These are purely due to not being able to find original files, or for clarity. Nothing in the actual tutorials themselves are changed. All original images are shown, as well as all original source code files included at the end of each chapter.
 
-If you happen to notice something that doesn't make sense, or if you have found some errors, please let me know by making a new issue. 
+If you happen to notice something that doesn't make sense, or if you have found some errors, please let me know by [making a new issue](https://github.com/Exclavia/Kernel-Dev/issues/new). 
