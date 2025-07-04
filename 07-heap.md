@@ -572,3 +572,45 @@ If we wanted to split our hole in two, we do it here, creating a new hole.
 ```
 This code quite simple in function but verbose in code. If a hole big enough couldn't be found (iterator == -1), we must expand the size of the heap (by calling the expand function). We then have to account for this expansion in the index. The normal way to do this is to find the endmost hole in the index and adjust it's size. The only time this won't work is when there aren't any holes in the index at all (an unlikely but possible case). In this case we must make one to fill the gap.
 
+#### 7.4.2.3. Freeing
+Again, I'll go through this step-by-step.
+```c
+void free(void *p, heap_t *heap)
+{
+   // Exit gracefully for null pointers.
+   if (p == 0)
+       return;
+
+   // Get the header and footer associated with this pointer.
+   header_t *header = (header_t*) ( (u32int)p - sizeof(header_t) );
+   footer_t *footer = (footer_t*) ( (u32int)header + header->size - sizeof(footer_t) );
+
+   // Sanity checks.
+   ASSERT(header->magic == HEAP_MAGIC);
+   ASSERT(footer->magic == HEAP_MAGIC);
+```
+Initially we find the header by subtracting sizeof(header_t) from p, then use this to find the footer. Sanity checks are always a good idea, as they provide an early indication if your code has overwritten crucial data.
+```c
+   // Make us a hole.
+   header->is_hole = 1;
+
+   // Do we want to add this header into the 'free holes' index?
+   char do_add = 1;
+```
+This block is being deallocated and so is now a hole. We also create a variable to hold whether we should add the header to the hole index (see algorithm description).
+```c
+   // Unify left
+   // If the thing immediately to the left of us is a footer...
+   footer_t *test_footer = (footer_t*) ( (u32int)header - sizeof(footer_t) );
+   if (test_footer->magic == HEAP_MAGIC &&
+       test_footer->header->is_hole == 1)
+   {
+       u32int cache_size = header->size; // Cache our current size.
+       header = test_footer->header;     // Rewrite our header with the new one.
+       footer->header = header;          // Rewrite our footer to point to the new header.
+       header->size += cache_size;       // Change the size.
+       do_add = 0;                       // Since this header is already in the index, we don't want to add it again.
+   }
+```
+This piece of code performs our left unification. By subtracting sizeof(header_t) from the header address, we can get a pointer to a footer. We check if this is actually a valid footer by checking it's magic number, and that it is a hole (not allocated!). If so, we rewrite our footer to point to the test footer's header, change our size, and instruct the algorithm not to add an entry to the hole index (as the header we just unified with was already in the index!).
+
