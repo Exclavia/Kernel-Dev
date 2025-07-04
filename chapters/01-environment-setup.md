@@ -65,7 +65,7 @@ link:
 ```
 This Makefile will compile every file in SOURCES, then link them together into one ELF binary, 'kernel'. It uses a linker script, 'link.ld' to do this.
 ### 1.5.2. Link.ld
-```assembly
+```
 /* Link.ld -- Linker script for the kernel - ensure everything goes in the */
 /*            Correct place.  */
 /*            Original file taken from Bran's Kernel Development */
