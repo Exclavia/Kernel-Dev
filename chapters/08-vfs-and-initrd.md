@@ -513,7 +513,7 @@ cd ..
 ./run_bochs.sh
 ```
 
-<img align="right" width="500" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/the_vfs_and_initrd_bochs.png" >
+<img align="right" width="450" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/the_vfs_and_initrd_bochs.png" >
 
 The code for this tutorial can be found [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/the_vfs_and_initrd.tar.gz).
 
