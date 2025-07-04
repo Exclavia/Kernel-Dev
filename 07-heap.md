@@ -88,3 +88,244 @@ So now we come to the implementation. As usual I'm going to try and explain the 
 
 The first datatype we need it an implementation of an ordered list. This concept will be used multiple times in your kernel (it is a common requirement) so it is probably a good idea to abstract it, so it can be used again.
 
+### 7.3.1. ordered_array.h
+```c
+// ordered_array.h -- Interface for creating, inserting and deleting
+// from ordered arrays.
+// Written for JamesM's kernel development tutorials.
+
+#ifndef ORDERED_ARRAY_H
+#define ORDERED_ARRAY_H
+
+#include "common.h"
+
+/**
+  This array is insertion sorted - it always remains in a sorted state (between calls).
+  It can store anything that can be cast to a void* -- so a u32int, or any pointer.
+**/
+typedef void* type_t;
+/**
+  A predicate should return nonzero if the first argument is less than the second. Else
+  it should return zero.
+**/
+typedef s8int (*lessthan_predicate_t)(type_t,type_t);
+typedef struct
+{
+   type_t *array;
+   u32int size;
+   u32int max_size;
+   lessthan_predicate_t less_than;
+} ordered_array_t;
+
+/**
+  A standard less than predicate.
+**/
+s8int standard_lessthan_predicate(type_t a, type_t b);
+
+/**
+  Create an ordered array.
+**/
+ordered_array_t create_ordered_array(u32int max_size, lessthan_predicate_t less_than);
+ordered_array_t place_ordered_array(void *addr, u32int max_size, lessthan_predicate_t less_than);
+
+/**
+  Destroy an ordered array.
+**/
+void destroy_ordered_array(ordered_array_t *array);
+
+/**
+  Add an item into the array.
+**/
+void insert_ordered_array(type_t item, ordered_array_t *array);
+
+/**
+  Lookup the item at index i.
+**/
+type_t lookup_ordered_array(u32int i, ordered_array_t *array);
+
+/**
+  Deletes the item at location i from the array.
+**/
+void remove_ordered_array(u32int i, ordered_array_t *array);
+
+#endif // ORDERED_ARRAY_H
+```
+Notice that in the name of abstraction we have made the 'less than' function user-defineable. We will use this in the heap implementation to order by size and not pointer address. Note also we have two methods of defining an ordered_array. create_ordered_array will use kmalloc() to get some space. place_ordered_array will use the given start location. As we want to put our heap in a specific place (and because kmalloc isn't yet working!) we use place_ordered_array in our heap code.
+
+### 7.3.2. ordered_map.c
+```c
+// ordered_array.c -- Implementation for creating, inserting and deleting
+// from ordered arrays.
+// Written for JamesM's kernel development tutorials.
+
+#include "ordered_array.h"
+
+s8int standard_lessthan_predicate(type_t a, type_t b)
+{
+   return (a<b)?1:0;
+}
+
+ordered_array_t create_ordered_array(u32int max_size, lessthan_predicate_t less_than)
+{
+   ordered_array_t to_ret;
+   to_ret.array = (void*)kmalloc(max_size*sizeof(type_t));
+   memset(to_ret.array, 0, max_size*sizeof(type_t));
+   to_ret.size = 0;
+   to_ret.max_size = max_size;
+   to_ret.less_than = less_than;
+   return to_ret;
+}
+
+ordered_array_t place_ordered_array(void *addr, u32int max_size, lessthan_predicate_t less_than)
+{
+   ordered_array_t to_ret;
+   to_ret.array = (type_t*)addr;
+   memset(to_ret.array, 0, max_size*sizeof(type_t));
+   to_ret.size = 0;
+   to_ret.max_size = max_size;
+   to_ret.less_than = less_than;
+   return to_ret;
+}
+
+void destroy_ordered_array(ordered_array_t *array)
+{
+// kfree(array->array);
+}
+
+void insert_ordered_array(type_t item, ordered_array_t *array)
+{
+   ASSERT(array->less_than);
+   u32int iterator = 0;
+   while (iterator < array->size && array->less_than(array->array[iterator], item))
+       iterator++;
+   if (iterator == array->size) // just add at the end of the array.
+       array->array[array->size++] = item;
+   else
+   {
+       type_t tmp = array->array[iterator];
+       array->array[iterator] = item;
+       while (iterator < array->size)
+       {
+           iterator++;
+           type_t tmp2 = array->array[iterator];
+           array->array[iterator] = tmp;
+           tmp = tmp2;
+       }
+       array->size++;
+   }
+}
+
+type_t lookup_ordered_array(u32int i, ordered_array_t *array)
+{
+   ASSERT(i < array->size);
+   return array->array[i];
+}
+
+void remove_ordered_array(u32int i, ordered_array_t *array)
+{
+   while (i < array->size)
+   {
+       array->array[i] = array->array[i+1];
+       i++;
+   }
+   array->size--;
+}
+```
+Hopefully nothing there should surprise you. On insert the item is placed at the correct position and all larger other items shifted up one position. As always with these satellite datatypes, any implementation will work. There are better implementations of ordered arrays than this (c.f. heap-ordering, binary search trees), but I decided to go with a simple one for teaching purposes.
+
+## 7.4. The heap itself
+### 7.4.1. kheap.h
+Some #defines and function prototypes are useful:
+```c
+#define KHEAP_START         0xC0000000
+#define KHEAP_INITIAL_SIZE  0x100000
+#define HEAP_INDEX_SIZE   0x20000
+#define HEAP_MAGIC        0x123890AB
+#define HEAP_MIN_SIZE     0x70000
+
+/**
+  Size information for a hole/block
+**/
+typedef struct
+{
+   u32int magic;   // Magic number, used for error checking and identification.
+   u8int is_hole;   // 1 if this is a hole. 0 if this is a block.
+   u32int size;    // size of the block, including the end footer.
+} header_t;
+
+typedef struct
+{
+   u32int magic;     // Magic number, same as in header_t.
+   header_t *header; // Pointer to the block header.
+} footer_t;
+
+typedef struct
+{
+   ordered_array_t index;
+   u32int start_address; // The start of our allocated space.
+   u32int end_address;   // The end of our allocated space. May be expanded up to max_address.
+   u32int max_address;   // The maximum address the heap can be expanded to.
+   u8int supervisor;     // Should extra pages requested by us be mapped as supervisor-only?
+   u8int readonly;       // Should extra pages requested by us be mapped as read-only?
+} heap_t;
+
+/**
+  Create a new heap.
+**/
+heap_t *create_heap(u32int start, u32int end, u32int max, u8int supervisor, u8int readonly);
+/**
+  Allocates a contiguous region of memory 'size' in size. If page_align==1, it creates that block starting
+  on a page boundary.
+**/
+void *alloc(u32int size, u8int page_align, heap_t *heap);
+/**
+  Releases a block allocated with 'alloc'.
+**/
+void free(void *p, heap_t *heap);
+```
+I have decided, arbitrarily, to put the kernel heap at 0xC0000000, give it's index a size of 0x20000 bytes, and give it a minimum size of 0x70000 bytes. The header and footer structures are the same as those given at the top of the chapter. We can actually have more than one heap (in my own kernel I have a user-mode heap as well), so for ease of portability I have decided to implement the heap as a datatype itself. heap_t keeps track of the heap's index, start/end/max addresses and the modifiers to give alloc_page when requesting more memory.
+
+### 7.4.2. kheap.c
+Finding the smallest hole that will fit a certain number of bytes is a common task that gets called on every allocation. It would therefore be nice to wrap this up in a function:
+```c
+static s32int find_smallest_hole(u32int size, u8int page_align, heap_t *heap)
+{
+   // Find the smallest hole that will fit.
+   u32int iterator = 0;
+   while (iterator < heap->index.size)
+   {
+       header_t *header = (header_t *)lookup_ordered_array(iterator, &heap->index);
+       // If the user has requested the memory be page-aligned
+       if (page_align > 0)
+       {
+           // Page-align the starting point of this header.
+           u32int location = (u32int)header;
+           s32int offset = 0;
+           if ((location+sizeof(header_t)) & 0xFFFFF000 != 0)
+               offset = 0x1000 /* page size */  - (location+sizeof(header_t))%0x1000;
+           s32int hole_size = (s32int)header->size - offset;
+           // Can we fit now?
+           if (hole_size >= (s32int)size)
+               break;
+       }
+       else if (header->size >= size)
+           break;
+       iterator++;
+   }
+   // Why did the loop exit?
+   if (iterator == heap->index.size)
+       return -1; // We got to the end and didn't find anything.
+   else
+       return iterator;
+}
+```
+I feel I should explain two lines:
+```c
+if ((location+sizeof(header_t)) & 0xFFFFF000 != 0)
+  offset = 0x1000 /* page size */  - (location+sizeof(header_t))%0x1000;
+```
+It's important to note that when the user requests memory to be page-aligned, he is requesting the memory that he has access to to be page-aligned. That means that the header address will actually not be page-aligned. The address that we want to fall on a boundary is location + sizeof(header_t).
+
+Creating a heap is a simple procedure. The only part worthy of note is that we set aside the first HEAP_INDEX_SIZE*sizeof(type_t) bytes as the index. The index is put there using place_ordered_array, and the effective start address is shifted forwards. That is why, when testing your kernel, you will see allocations starting at 0xC0080000 instead of the more obvious 0xC0000000. Also note that we create a custom less_than function for the index array. This is because with the standard less_than function the array would be sorted by pointer address, instead of by size.
+
+
