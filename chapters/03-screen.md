@@ -1,3 +1,5 @@
+<h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/02-genesis.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/04-gdt-and-idt.md">Next Chapter -></a></p></h4>
+
 # 3. The Screen
 So, now that we have a 'kernel' that can run and stick itself into an infinite loop, it's time to get something interesting appearing on the screen. Along with serial I/O, the monitor will be your most important ally in the debugging battle.
 
@@ -286,3 +288,9 @@ The function names should be pretty self explanatory -- writing in hexadecimal r
 You could also have a scout at the linux0.1 code - that has an implementation of vsprintf which is quite neat and tidy. You could copy that function then use it to implement printf(), which will make your life a hell of a lot easier when it comes to debugging.
 
 Source code for this tutorial is available [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/the_screen.tar.gz)
+
+
+
+
+<br><br><br><br><br><br>
+## <h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/02-genesis.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/04-gdt-and-idt.md">Next Chapter -></a></p></h4>
