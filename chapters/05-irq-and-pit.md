@@ -243,7 +243,7 @@ When this is done, all we have to do is edit our Makefile, add one line to main.
 init_timer(50); // Initialise timer to 50Hz
 ```
 
-<img align="right" width="500" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/irqs_and_the_pit_bochs.png" >
+<img align="right" width="450" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/irqs_and_the_pit_bochs.png" >
 
 
 
