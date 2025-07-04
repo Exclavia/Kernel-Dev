@@ -392,4 +392,124 @@ And finally return the root node so the kernel can access us:
 }
 ```
 ## 8.4. Loading the initrd as a multiboot module
+Now we need to work out how to get our initrd loaded into memory in the first place. Luckily, the multiboot specification allows for 'modules' to be loaded. We can tell GRUB to load our initrd as a module. You can do this by mounting the floppy.img file as a loopback device, finding the /boot/grub/menu.lst file and adding a 'module (fd0)/initrd' line just below the 'kernel' line.
 
+GRUB communicates the location of this file to us via the multiboot information structure that we declared but never defined in the first tutorial. We have to define it now: This definition is lifted directly from the [Multiboot spec](https://www.gnu.org/software/grub/manual/multiboot/multiboot.html).
+
+multiboot.h
+```c
+#include "common.h"
+
+#define MULTIBOOT_FLAG_MEM     0x001
+#define MULTIBOOT_FLAG_DEVICE  0x002
+#define MULTIBOOT_FLAG_CMDLINE 0x004
+#define MULTIBOOT_FLAG_MODS    0x008
+#define MULTIBOOT_FLAG_AOUT    0x010
+#define MULTIBOOT_FLAG_ELF     0x020
+#define MULTIBOOT_FLAG_MMAP    0x040
+#define MULTIBOOT_FLAG_CONFIG  0x080
+#define MULTIBOOT_FLAG_LOADER  0x100
+#define MULTIBOOT_FLAG_APM     0x200
+#define MULTIBOOT_FLAG_VBE     0x400
+
+struct multiboot
+{
+   u32int flags;
+   u32int mem_lower;
+   u32int mem_upper;
+   u32int boot_device;
+   u32int cmdline;
+   u32int mods_count;
+   u32int mods_addr;
+   u32int num;
+   u32int size;
+   u32int addr;
+   u32int shndx;
+   u32int mmap_length;
+   u32int mmap_addr;
+   u32int drives_length;
+   u32int drives_addr;
+   u32int config_table;
+   u32int boot_loader_name;
+   u32int apm_table;
+   u32int vbe_control_info;
+   u32int vbe_mode_info;
+   u32int vbe_mode;
+   u32int vbe_interface_seg;
+   u32int vbe_interface_off;
+   u32int vbe_interface_len;
+}  __attribute__((packed));
+
+typedef struct multiboot_header multiboot_header_t;
+```
+The interesting fields are the mods_addr and mods_count fields. The mods_count field contains the number of modules loaded. We should check that this is > 0. The mods_addr field is an array of addresses: Each 'entry' consists of the starting address of the module and it's end, each being 4 bytes.
+
+As we are only expecting one module we can just treat the mods_addr field as a pointer and find whatever value lies there. That will be the location of our initrd. The value of the address 4 bytes on from that will be the end address. We can use this to change the memory management placement address so that memory allocations don't accidentally overwrite our ramdisk!
+
+main.c
+```c
+int main(struct multiboot *mboot_ptr)
+{
+   // Initialise all the ISRs and segmentation
+   init_descriptor_tables();
+   // Initialise the screen (by clearing it)
+   monitor_clear();
+
+   // Find the location of our initial ramdisk.
+   ASSERT(mboot_ptr->mods_count > 0);
+   u32int initrd_location = *((u32int*)mboot_ptr->mods_addr);
+   u32int initrd_end = *(u32int*)(mboot_ptr->mods_addr+4);
+   // Don't trample our module with placement accesses, please!
+   placement_address = initrd_end;
+
+   // Start paging.
+   initialise_paging();
+
+   // Initialise the initial ramdisk, and set it as the filesystem root.
+   fs_root = initialise_initrd(initrd_location);
+}
+```
+Success! That's one VFS and initrd cooked up in no time. Let's test it out.
+
+## 8.5. Testing it out
+Firstly let's add some test code to find all files in '/' and print their contents:
+main.c
+```c
+// list the contents of /
+int i = 0;
+struct dirent *node = 0;
+while ( (node = readdir_fs(fs_root, i)) != 0)
+{
+  monitor_write("Found file ");
+  monitor_write(node->name);
+  fs_node_t *fsnode = finddir_fs(fs_root, node->name);
+
+  if ((fsnode->flags&0x7) == FS_DIRECTORY)
+    monitor_write("\n\t(directory)\n");
+  else
+  {
+    monitor_write("\n\t contents: \"");
+    char buf[256];
+    u32int sz = read_fs(fsnode, 0, 256, buf);
+    int j;
+    for (j = 0; j < sz; j++)
+      monitor_put(buf[j]);
+
+    monitor_write("\"\n");
+  }
+  i++;
+}
+```
+Make a couple of test files, and build!
+```
+./make_initrd test.txt test.txt test2.txt test2.txt
+cd src
+make clean
+make
+cd ..
+./update_image.sh
+./run_bochs.sh
+```
+<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/the_vfs_and_initrd_bochs.png" >
+
+The code for this tutorial can be found [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/the_vfs_and_initrd.tar.gz).
