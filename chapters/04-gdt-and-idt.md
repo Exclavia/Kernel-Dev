@@ -426,7 +426,7 @@ Now we can test it out! Add this to your main() function:
 asm volatile ("int $0x3");
 asm volatile ("int $0x4");
 ```
-<img align="right" width="500" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/gdt_idt_bochs.png">
+<img align="right" width="450" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/gdt_idt_bochs.png">
 
 This causes two software interrupts: 3 and 4. You should see the messages printed out just like the screenshot on the right.
 
