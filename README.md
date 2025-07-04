@@ -2,6 +2,7 @@
 A clone of James Molloy's Kernel Development tutorials, grabbed via WayBack archive circa. 2021-2023 (As of July 2025 the website seems to be down.)
 - [Original Website](http://www.jamesmolloy.co.uk/tutorial_html/)
 - [Additional Notes](#additional-notes)
+- [Project Files](https://github.com/Exclavia/Kernel-Dev/blob/main/files/)
 
 ## Roll your own toy UNIX-clone OS
 This set of tutorials aims to take you through programming a simple UNIX-clone operating system for the x86 architecture. The tutorial uses C as the language of choice, with liberally mixed in bits of assembler. The aim is to talk you through the design and implementation decisions in making an operating system. The OS we make is monolithic in design (drivers are loaded through kernel-mode modules as opposed to user-mode programs), as this is simpler.
