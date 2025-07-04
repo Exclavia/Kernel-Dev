@@ -34,8 +34,8 @@ Virtual memory is an abstract principle. As such it requires concretion throug
 Paging works by splitting the virtual address space into blocks called pages, which are usually 4KB in size. Pages can then be mapped on to frames - equally sized blocks of physical memory.
 
 ### 6.2.1. Page entries
+<img align="right" width="300" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/paging_pte_1.png" >
 Each process normally has a different set of page mappings, so that virtual memory spaces are independent of each other.
-<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/paging_pte_1.png" >
 In the x86 architecture (32-bit) pages are fixed at 4KB in size. Each page has a corresponding descriptor word, which tells the processor which frame it is mapped to. Note that because pages and frames must be aligned on 4KB boundaries (4KB being 0x1000 bytes), the least significant 12 bits of the 32-bit word are always zero. The architecture takes advantage of this by using them to store information about the page, such as whether it is present, whether it is kernel-mode or user-mode etc. The layout of this word is in the picture.
 
 The fields in that picture are pretty simple, so let's quickly go through them.
@@ -65,7 +65,7 @@ The fields in that picture are pretty simple, so let's quickly go through them.
 > The high 20 bits of the frame address in physical memory.
 
 ### 6.2.2. Page directories/tables
-<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/page_directory_2.png" >
+<img align="right" width="400" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/page_directory_2.png" >
 Possibly you've been tapping on your calculator and have worked out that to generate a table mapping each 4KB page to one 32-bit descriptor over a 4GB address space requires 4MB of memory. Perhaps, perhaps not - but it's true.
 
 4MB may seem like a large overhead, and to be fair, it is. If you have 4GB of physical RAM, it's not much. However, if you are working on a machine that has 16MB of RAM, you've just lost a quarter of your available memory! What we want is something progressive, that will take up an amount of space proportionate to the amount of RAM you have.
@@ -482,7 +482,7 @@ int main(struct multiboot *mboot_ptr)
    return 0;
 }
 ```
-<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/paging_bochs_3.png" >
+<img align="right" width="500" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/paging_bochs_3.png" >
 
 This will, obviously, initialise paging, print a string to make sure it's set up right and not faulting when it shoudn't, and then force a page fault by reading location 0xA0000000.
 
