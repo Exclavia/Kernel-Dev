@@ -4,6 +4,7 @@ In this chapter we're going to be starting work on our virtual filesystem (VFS).
 ## 8.1. The virtual filesystem
 A VFS is intended to abstract away details of the filesystem and location that files are stored, and to give access to them in a uniform manner. They are usually implemented as a graph of nodes; 
 <img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/vfs.png" >
+
 Each node representing either a file, directory, symbolic link, device, socket or pipe. Each node should know what filesystem it belongs to and have enough information such that the relavent open/close/etc functions in its driver can be found and executed. A common way to accomplish this is to have the node store function pointers which can be called by the kernel. We'll need a few function pointers:
 - Open - Called when a node is opened as a file descriptor.
 - Close - Called when the node is closed.
