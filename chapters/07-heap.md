@@ -8,8 +8,8 @@ As a sidepoint of general terminology, any data structure that provides both a
 The algorithm and data structures presented here are ones which I developed myself. They are so simple however, that I am sure others will have used it first. It is similar to (though more simple than) [Doug Lea's malloc](https://gee.cs.oswego.edu/dl/html/malloc.html) which is used in the GNU C library.
 
 ## 7.1. Data structure description
+<img align="right" width="300" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/heap_format.png" >
 The algorithm uses two concepts: blocks and holes. Blocks are contiguous areas of memory containing user data currently in use (i.e. malloc()d but not free()d). Holes are blocks but their contents are not in use. So initially by this concept the entire area of heap space is one large hole.
-<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/heap_format.png" >
 For every hole there is a corresponding descriptor in an index table. The index table is always ordered ascending by the size of the hole pointed to.
 
 Blocks and holes each contain descriptive data - a header and a footer. The header contains the most information about the block - the footer merely contains a pointer to the header (the reason for the footer will become apparent soon). Pseudocode:
@@ -57,10 +57,13 @@ kfree(a);           // Release a
 kfree(b);           // Release b
 int c = kmalloc(16);// What will this allocation return?
 ```
+<img align="right" width="300" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/unifying.png" >
+
 Note that in this example the space required for headers and footers have been purposely omitted for readability
 
 Here we have allocated space for 8 bytes, twice. We then release both of those allocations. With the naive release algorithm we would then end up with two 8-byte sized holes in the index. When the next allocation (for 16 bytes) comes along, neither of those holes can fit it, so the kmalloc() call will return 0xC0080010. This is suboptimal. There are 16 bytes of space free at 0xC0080000, so we should be reallocating that!
-<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/unifying.png" >
+
+
 The solution to this problem in most cases is a varation on a simple algorithm that I call unification - That is, converting two adjacent holes into one. (Please note that this coining of a term is not from a sense of self-importance, merely from the absence of a standardised name).
 
 It works thus: When free()ing a block, look at what is immediately to the left (assuming 0-4GB left-to-right) of the header. If that is a footer, which can be discovered from the value of the magic number, then follow the pointer to it's header and query whether it is a hole or a block. If it is a hole, we can modify it's header's size attribute to take into account both it's size and ours, then point our footer to it's header. We have thus amalgamated both holes into one (and in this case there is no need to do an expensive insert operation on the index).
@@ -726,10 +729,12 @@ u32int d = kmalloc(12);
 monitor_write(", d: ");
 monitor_write_hex(d);
 ```
-<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/the_heap_bochs.png" >
 You can, of course, experiment with the order of allocations and frees here. The code above will allocate one variable, a, before initialise_paging is called, so it'll be allocated via placement address. b and c both get allocated on the heap, and printed out. They are then both freed and another variable, d, created. If the address of d is the same as the address of b, then the space reclaimed by b and c has been successfully unified and all is good!
 
 ## 7.6. Summary
+<img align="right" width="500" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/the_heap_bochs.png" >
+
 Dynamic memory allocation is one of the few things that it is very difficult to do without. Without it, you would have to specify an absolute maximum number of processes running (static array of pids), you would have to statically give the size of every buffer - Generally making your OS lacklustre and woefully inefficient.
+
 
 Sample code, as ever, can be found [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/the_heap.tar.gz).
