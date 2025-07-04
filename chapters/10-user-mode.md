@@ -1,5 +1,6 @@
 # 10. User mode (and syscalls)
-<img align="right" width="200" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/rings.png" >
+<img align="right" width="300" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/rings.png" >
+
 Your kernel, at the moment, is running with the processor in "kernel mode", or "supervisor mode". Kernel mode makes available certain instructions that would usually be denied a user program - like being able to disable interrupts, or halt the processor.
 Once you start running user programs, you'll want to make the jump from kernel mode to user mode, to restrict what instructions are available. You can also restrict read or write access to areas of memory. This is often used to 'hide' the kernel's code and data from user programs.
 
@@ -377,7 +378,7 @@ syscall_monitor_write("Hello, user world!\n");
 
 return 0;
 ```
-<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/user_mode_bochs.png" >
+<img align="right" width="500" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/user_mode_bochs.png" >
 
 With this test code in main.c, you should have a functional user mode and syscall interface, suitable for running untrusted user programs.
 
