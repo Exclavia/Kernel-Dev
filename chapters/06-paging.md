@@ -86,7 +86,7 @@ When a process does something the memory-management unit doesn't like, a page fa
 - The process is in user-mode and tries to write to a read-only page.The process is in user-mode and tries to access a kernel-only page.
 - The page table entry is corrupted - the reserved bits have been overwritten.
 
-The page fault interrupt is number 14, and looking at [chapter 3](https://github.com/Exclavia/Kernel-Dev/blob/main/03-screen.md) we can see that this throws an error code. This error code gives us quite a bit of information about what happened.
+The page fault interrupt is number 14, and looking at [chapter 3](https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/03-screen.md) we can see that this throws an error code. This error code gives us quite a bit of information about what happened.
 
 **Bit 0**
 > If set, the fault was not because the page wasn't present. If unset, the page wasn't present.
