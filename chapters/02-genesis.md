@@ -1,3 +1,5 @@
+<h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/01-environment-setup.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/03-screen.md">Next Chapter -></a></p></h4>
+
 # 2. Genesis
 ## 2.1. The boot code
 OK, It's time for some code! Although the brunt of our kernel will be written in C, there are certain things we just must use assembly for. One of those things is the initial boot code.
@@ -188,6 +190,7 @@ If you open bochsout.txt, at the bottom you should see something like:
 
 <img align="right" width="500" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/genesis_bochs.png">
 
+
 Notice what the value of EAX is? 0xDEADBABA - the return value of main().
 
 Congratulations, you now have a multiboot compatible assembly trampoline, and you're ready to start printing to the screen!
@@ -195,6 +198,8 @@ Congratulations, you now have a multiboot compatible assembly trampoline, and yo
 Sample code for this tutorial can be found [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/genesis.tar)
 
 
+<br><br><br><br><br>
+## <h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/01-environment-setup.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/03-screen.md">Next Chapter -></a></p></h4>
 
 
 
