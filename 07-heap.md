@@ -60,7 +60,7 @@ int c = kmalloc(16);// What will this allocation return?
 Note that in this example the space required for headers and footers have been purposely omitted for readability
 
 Here we have allocated space for 8 bytes, twice. We then release both of those allocations. With the naive release algorithm we would then end up with two 8-byte sized holes in the index. When the next allocation (for 16 bytes) comes along, neither of those holes can fit it, so the kmalloc() call will return 0xC0080010. This is suboptimal. There are 16 bytes of space free at 0xC0080000, so we should be reallocating that!
-
+<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/unifying.png" >
 The solution to this problem in most cases is a varation on a simple algorithm that I call unification - That is, converting two adjacent holes into one. (Please note that this coining of a term is not from a sense of self-importance, merely from the absence of a standardised name).
 
 It works thus: When free()ing a block, look at what is immediately to the left (assuming 0-4GB left-to-right) of the header. If that is a footer, which can be discovered from the value of the magic number, then follow the pointer to it's header and query whether it is a hole or a block. If it is a hole, we can modify it's header's size attribute to take into account both it's size and ours, then point our footer to it's header. We have thus amalgamated both holes into one (and in this case there is no need to do an expensive insert operation on the index).
@@ -674,3 +674,62 @@ if (do_add == 1)
 ```
 If we are suppposed to add ourselves into the index, do it here. And that's it! The next thing to do is initialise the heap when paging is initialised :)
 
+#### 7.4.2.4. paging.c
+```c
+extern heap_t *kheap;
+```
+We declare the variable kheap as our kernel heap. We define this in kheap.c (you can do that yourself) and reference it here.
+```c
+   // Map some pages in the kernel heap area.
+   // Here we call get_page but not alloc_frame. This causes page_table_t's
+   // to be created where necessary. We can't allocate frames yet because they
+   // they need to be identity mapped first below, and yet we can't increase
+   // placement_address between identity mapping and enabling the heap!
+   int i = 0;
+   for (i = KHEAP_START; i < KHEAP_START+KHEAP_INITIAL_SIZE; i += 0x1000)
+       get_page(i, 1, kernel_directory);
+```
+This goes in initialise_paging, before we identity map from 0-placement_addr. There is a reason for this code. As the kernel heap is up at 0xC0000000, when we write to it some page tables will need to be created (beacause nothing near that area has been accessed before). However, after we finish the identity-mapping loop allocating everything up to placement_address, we can't use kmalloc any more until our heap is active! So, we need to force the tables to be created before we freeze the placement address. That's what this code does.
+```c
+   // Now allocate those pages we mapped earlier.
+   for (i = KHEAP_START; i < KHEAP_START+KHEAP_INITIAL_SIZE; i += 0x1000)
+       alloc_frame( get_page(i, 1, kernel_directory), 0, 0);
+
+   // Before we enable paging, we must register our page fault handler.
+   register_interrupt_handler(14, page_fault);
+
+   // Now, enable paging!
+   switch_page_directory(kernel_directory);
+
+   // Initialise the kernel heap.
+   kheap = create_heap(KHEAP_START, KHEAP_START+KHEAP_INITIAL_SIZE, 0xCFFFF000, 0, 0);
+```
+Et voila! you are complete! A nice thing to do (which I have done in my sample code) is to get kmalloc/kfree to pass calls straight through to alloc/free if kheap != 0. I'll leave that to you to do ;)
+
+## 7.5. Testing
+main.c
+```c
+u32int a = kmalloc(8);
+initialise_paging();
+u32int b = kmalloc(8);
+u32int c = kmalloc(8);
+monitor_write("a: ");
+monitor_write_hex(a);
+monitor_write(", b: ");
+monitor_write_hex(b);
+monitor_write("\nc: ");
+monitor_write_hex(c);
+
+kfree(c);
+kfree(b);
+u32int d = kmalloc(12);
+monitor_write(", d: ");
+monitor_write_hex(d);
+```
+<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/the_heap_bochs.png" >
+You can, of course, experiment with the order of allocations and frees here. The code above will allocate one variable, a, before initialise_paging is called, so it'll be allocated via placement address. b and c both get allocated on the heap, and printed out. They are then both freed and another variable, d, created. If the address of d is the same as the address of b, then the space reclaimed by b and c has been successfully unified and all is good!
+
+## 7.6. Summary
+Dynamic memory allocation is one of the few things that it is very difficult to do without. Without it, you would have to specify an absolute maximum number of processes running (static array of pids), you would have to statically give the size of every buffer - Generally making your OS lacklustre and woefully inefficient.
+
+Sample code, as ever, can be found here.
