@@ -215,3 +215,181 @@ I'm not going to explain the contents of this file: It is auxiliary and not impo
 ### 8.3.2. Integrating it in to your own OS
 Even if you are using a different file format to mine, this section may be useful in helping you integrate it into the kernel.
 
+#### 8.3.2.1. initrd.h
+
+This file just defines the header structure types and gives a function prototype for the initialise_initrd function so the kernel can call it.
+```c
+// initrd.h -- Defines the interface for and structures relating to the initial ramdisk.
+// Written for JamesM's kernel development tutorials.
+
+#ifndef INITRD_H
+#define INITRD_H
+
+#include "common.h"
+#include "fs.h"
+
+typedef struct
+{
+   u32int nfiles; // The number of files in the ramdisk.
+} initrd_header_t;
+
+typedef struct
+{
+   u8int magic;     // Magic number, for error checking.
+   s8int name[64];  // Filename.
+   u32int offset;   // Offset in the initrd that the file starts.
+   u32int length;   // Length of the file.
+} initrd_file_header_t;
+
+// Initialises the initial ramdisk. It gets passed the address of the multiboot module,
+// and returns a completed filesystem node.
+fs_node_t *initialise_initrd(u32int location);
+
+#endif
+```
+#### 8.3.2.2. initrd.c
+The first thing we need is some static declarations:
+```c
+// initrd.c -- Defines the interface for and structures relating to the initial ramdisk.
+// Written for JamesM's kernel development tutorials.
+
+#include "initrd.h"
+
+initrd_header_t *initrd_header;     // The header.
+initrd_file_header_t *file_headers; // The list of file headers.
+fs_node_t *initrd_root;             // Our root directory node.
+fs_node_t *initrd_dev;              // We also add a directory node for /dev, so we can mount devfs later on.
+fs_node_t *root_nodes;              // List of file nodes.
+int nroot_nodes;                    // Number of file nodes.
+
+struct dirent dirent;
+```
+The next thing we need is a function to read from a file in our initrd.
+```c
+static u32int initrd_read(fs_node_t *node, u32int offset, u32int size, u8int *buffer)
+{
+   initrd_file_header_t header = file_headers[node->inode];
+   if (offset > header.length)
+       return 0;
+   if (offset+size > header.length)
+       size = header.length-offset;
+   memcpy(buffer, (u8int*) (header.offset+offset), size);
+   return size;
+}
+```
+That function demonstrates one very annoying thing about writing low level code: 80% of it is error-checking. Unfortunately you can't get away from it - if you leave it out you will spend literally days trying to work out why your code doesn't work.
+
+It would also be quite useful to have some working readdir and finddir functions:
+```c
+static struct dirent *initrd_readdir(fs_node_t *node, u32int index)
+{
+   if (node == initrd_root && index == 0)
+   {
+     strcpy(dirent.name, "dev");
+     dirent.name[3] = 0; // Make sure the string is NULL-terminated.
+     dirent.ino = 0;
+     return &dirent;
+   }
+
+   if (index-1 >= nroot_nodes)
+       return 0;
+   strcpy(dirent.name, root_nodes[index-1].name);
+   dirent.name[strlen(root_nodes[index-1].name)] = 0; // Make sure the string is NULL-terminated.
+   dirent.ino = root_nodes[index-1].inode;
+   return &dirent;
+}
+
+static fs_node_t *initrd_finddir(fs_node_t *node, char *name)
+{
+   if (node == initrd_root &&
+       !strcmp(name, "dev") )
+       return initrd_dev;
+
+   int i;
+   for (i = 0; i < nroot_nodes; i++)
+       if (!strcmp(name, root_nodes[i].name))
+           return &root_nodes[i];
+   return 0;
+}
+```
+Last but not least we need to initialise the filesystem:
+```c
+fs_node_t *initialise_initrd(u32int location)
+{
+   // Initialise the main and file header pointers and populate the root directory.
+   initrd_header = (initrd_header_t *)location;
+   file_headers = (initrd_file_header_t *) (location+sizeof(initrd_header_t));
+```
+We assume that the kernel knows where our initrd starts and can convey that location to the initialise function.
+```c
+   // Initialise the root directory.
+   initrd_root = (fs_node_t*)kmalloc(sizeof(fs_node_t));
+   strcpy(initrd_root->name, "initrd");
+   initrd_root->mask = initrd_root->uid = initrd_root->gid = initrd_root->inode = initrd_root->length = 0;
+   initrd_root->flags = FS_DIRECTORY;
+   initrd_root->read = 0;
+   initrd_root->write = 0;
+   initrd_root->open = 0;
+   initrd_root->close = 0;
+   initrd_root->readdir = &initrd_readdir;
+   initrd_root->finddir = &initrd_finddir;
+   initrd_root->ptr = 0;
+   initrd_root->impl = 0;
+```
+Here we make the root directory node. We get some memory from the kernel heap and give the node a name. We really don't need to name this node as the root is never referenced by name, just '/'.
+
+Most of the code initialises pointers to NULL (0), but you'll notice that the node is told it is a directory (flags = FS_DIRECTORY) and that it has both readdir and finddir functions.
+
+The same is done for the /dev node:
+```c
+   // Initialise the /dev directory (required!)
+   initrd_dev = (fs_node_t*)kmalloc(sizeof(fs_node_t));
+   strcpy(initrd_dev->name, "dev");
+   initrd_dev->mask = initrd_dev->uid = initrd_dev->gid = initrd_dev->inode = initrd_dev->length = 0;
+   initrd_dev->flags = FS_DIRECTORY;
+   initrd_dev->read = 0;
+   initrd_dev->write = 0;
+   initrd_dev->open = 0;
+   initrd_dev->close = 0;
+   initrd_dev->readdir = &initrd_readdir;
+   initrd_dev->finddir = &initrd_finddir;
+   initrd_dev->ptr = 0;
+   initrd_dev->impl = 0;
+```
+Now that they're done we can start actually adding the files in the ramdisk. First we allocate space for them:
+```c
+   root_nodes = (fs_node_t*)kmalloc(sizeof(fs_node_t) * initrd_header->nfiles);
+   nroot_nodes = initrd_header->nfiles;
+```
+Then we make them:
+```c
+   // For every file...
+   int i;
+   for (i = 0; i < initrd_header->nfiles; i++)
+   {
+       // Edit the file's header - currently it holds the file offset
+       // relative to the start of the ramdisk. We want it relative to the start
+       // of memory.
+       file_headers[i].offset += location;
+       // Create a new file node.
+       strcpy(root_nodes[i].name, &file_headers[i].name);
+       root_nodes[i].mask = root_nodes[i].uid = root_nodes[i].gid = 0;
+       root_nodes[i].length = file_headers[i].length;
+       root_nodes[i].inode = i;
+       root_nodes[i].flags = FS_FILE;
+       root_nodes[i].read = &initrd_read;
+       root_nodes[i].write = 0;
+       root_nodes[i].readdir = 0;
+       root_nodes[i].finddir = 0;
+       root_nodes[i].open = 0;
+       root_nodes[i].close = 0;
+       root_nodes[i].impl = 0;
+   }
+```
+And finally return the root node so the kernel can access us:
+```c
+   return initrd_root;
+}
+```
+## 8.4. Loading the initrd as a multiboot module
+
