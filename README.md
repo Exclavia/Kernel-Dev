@@ -22,14 +22,14 @@ This set of tutorials is very practical in nature. The theory is given in every 
 10. [User Mode](https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/10-user-mode.md)
 
 ### Prerequisites
-To compile and run the sample code I provide requires just GCC, ld, NASM and GNU Make. NASM is an open-source x86 assembler, and is the assembler-of-choice for many x86 OS-devs.
+To compile and run the sample code I provide requires just [GCC](https://gcc.gnu.org/), [ld](https://www.gnu.org/software/binutils/), [NASM](https://www.nasm.us/) and [GNU Make](https://www.gnu.org/software/make/). NASM is an open-source x86 assembler, and is the assembler-of-choice for many x86 OS-devs.
 
 There is no point, however, in just compiling and running without comprehension. You must understand what is being coded, and as such you should have a very strong knowledge of C, especially regarding pointers. You should also know a little bit of assembly (Intel syntax is used in these tutorials), including what the EBP register is used for.
 
 ### Resources
 There are plenty of resources out there if you know where to look. In particular, you should find these useful:
 
-- [RTFM!](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html) The intel manuals are a godsend
+- [Intel Arch Manuals](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html)
 - [OSdev.org](https://wiki.osdev.org/Expanded_Main_Page) wiki and forums.
 - [OSdever.net](http://www.osdever.net/tutorials/) has many good tutorials and papers, and in particular Bran's kernel development tutorials, which some of the earlier code from this tutorial is based off. (I myself used these tutorials to get started, and the code is so good I haven't had to change it over the years)
 - [alt.os.development](https://groups.google.com/g/alt.os.development) can answer many of your non-n00b questions. N00b questions are better asked on the [osdever.net forums.](http://forums.osdever.net/)
