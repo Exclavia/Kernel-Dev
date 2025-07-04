@@ -481,7 +481,99 @@ To try and distinguish between the two cases, we check if "current_task == paren
 ```
 Let's just run through that code. If we are the parent task, we read the current stack pointer and base pointer values and store them into the new task's task_struct. We also store the instruction pointer we found earlier in there, and reenable interrupts (because we've finished). Fork(), by convention, returns the PID of the child task if we are the parent, or zero if we are the child.
 
+### 9.4.1. Switching tasks
+Firstly we need to get the timer callback to call our scheduling function.
 
+In timer.c
+```c
+static void timer_callback(registers_t regs)
+{
+   tick++;
+   switch_task();
+}
+
+Now we just need to write it! ;)
+
+void switch_task()
+{
+   // If we haven't initialised tasking yet, just return.
+   if (!current_task)
+       return;
+```
+Because this function will be called whenever the timer fires, it is very possible that it will be called before initialise_tasking has been called. So we check that here - if the current task is NULL, we haven't set up tasking yet, so just return.
+
+Next, lets just quickly grab the stack and base pointers - we'll need them in a minute.
+```c
+// Read esp, ebp now for saving later on.
+u32int esp, ebp, eip;
+asm volatile("mov %%esp, %0" : "=r"(esp));
+asm volatile("mov %%ebp, %0" : "=r"(ebp));
+```
+Now it's time for some cunning logic. Make sure you understand this piece of code. It's very important. We read the instruction pointer, using our read_eip function again. We'll put this value into the current task's "eip" field, so the next time it is scheduled, it picks up again at exactly the same location. However, just like in fork(), after the call we could be in one of two states:
+1. We just called read_eip, and it returned us the current instruction pointer.
+2. We just switched tasks, and execution started just after the read_eip function.
+
+How do we distinguish between the two? Well, we can cheat. When we actually do the assembly to switch tasks (in a minute), we can plant a dummy value (I've used 0x12345) into EAX. Because C uses EAX as the return value of a function, in the second case the return value of read_eip will seem to be 0x12345! So we can use that to distinguish between them.
+```c
+   // Read the instruction pointer. We do some cunning logic here:
+   // One of two things could have happened when this function exits -
+   // (a) We called the function and it returned the EIP as requested.
+   // (b) We have just switched tasks, and because the saved EIP is essentially
+   // the instruction after read_eip(), it will seem as if read_eip has just
+   // returned.
+   // In the second case we need to return immediately. To detect it we put a dummy
+   // value in EAX further down at the end of this function. As C returns values in EAX,
+   // it will look like the return value is this dummy value! (0x12345).
+   eip = read_eip();
+
+   // Have we just switched tasks?
+   if (eip == 0x12345)
+       return;
+```
+Next, we write the new ESP, EBP and EIP into the current task's task struct.
+```c
+   // No, we didn't switch tasks. Let's save some register values and switch.
+   current_task->eip = eip;
+   current_task->esp = esp;
+   current_task->ebp = ebp;
+```
+Then, we switch tasks! Advance through the current_task listed list. If we fall off the end (if current_task ends up being zero, we just start again).
+```c
+   // Get the next task to run.
+   current_task = current_task->next;
+   // If we fell off the end of the linked list start again at the beginning.
+   if (!current_task) current_task = ready_queue;
+
+   esp = current_task->esp;
+   ebp = current_task->ebp;
+```
+The last three lines are just to make the assembly that follows a bit easier to understand.
+
+The comments in this function really should explain everything. We change all the registers we need, then jump to the new instruction location.
+```c
+   // Here we:
+   // * Stop interrupts so we don't get interrupted.
+   // * Temporarily put the new EIP location in ECX.
+   // * Load the stack and base pointers from the new task struct.
+   // * Change page directory to the physical address (physicalAddr) of the new directory.
+   // * Put a dummy value (0x12345) in EAX so that above we can recognise that we've just
+   // switched task.
+   // * Restart interrupts. The STI instruction has a delay - it doesn't take effect until after
+   // the next instruction.
+   // * Jump to the location in ECX (remember we put the new EIP in there).
+   asm volatile("         \
+     cli;                 \
+     mov %0, %%ecx;       \
+     mov %1, %%esp;       \
+     mov %2, %%ebp;       \
+     mov %3, %%cr3;       \
+     mov $0x12345, %%eax; \
+     sti;                 \
+     jmp *%%ecx           "
+                : : "r"(eip), "r"(esp), "r"(ebp), "r"(current_directory->physicalAddr));
+}
+```
+Sorted! That's us finished! Let's test it out!
 
 
 
