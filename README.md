@@ -1,5 +1,5 @@
 # James Molloy - Kernel Development Tutorials
-A clone of James Molloy's Kernel Development tutorials, grabbed via WayBack archive circa. 2021 (As of July 2025 the website seems to be down.)
+A clone of James Molloy's Kernel Development tutorials, grabbed via WayBack archive circa. 2021-2023 (As of July 2025 the website seems to be down.)
 - [Original Website](http://www.jamesmolloy.co.uk/tutorial_html/)
 - [Additional Notes](#additional-notes)
 
