@@ -1,3 +1,5 @@
+<h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/02-genesis.md">Next Chapter -></a></p></h4>
+
 # 1. Environment setup
 We need a base from which to design and make our kernel. Here I will be assuming that you are using a *nix system, with the GNU toolchain. If you want to use a windows system, you must either use cygwin (which is a *nix emulation environment) or DJGPP. Either way, the makefiles and commands in this tutorial may not work.
 
@@ -124,6 +126,8 @@ sudo /sbin/losetup /dev/loop0 floppy.img
 sudo bochs -f bochsrc.txt
 sudo /sbin/losetup -d /dev/loop0
 ```
+
+## <h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/02-genesis.md">Next Chapter -></a></p></h4>
 
 [^1]: Assumed to be original referenced file. See files [README](https://github.com/Exclavia/Kernel-Dev/blob/main/files/README.md) for more info.
 [^2]: Alternative version also available [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/alt/)
