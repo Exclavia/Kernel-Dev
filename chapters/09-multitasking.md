@@ -14,10 +14,10 @@ This relies on several things:
 2. The task switch code can be run seamlessly when changing address spaces. The task switch code should be able to change address spaces and then continue executing as if nothing happened. This means that the kernel code must be mapped in at the same place in all address spaces.
 
 ### 9.1.1. Some notes about address spaces
-<img align="right" width="200" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/tasking_fork.png" >
-A lot of the complication in implementing multitasking is not just the context switching - a new address space must be created for each task. The complication is that some parts of the address space must be copied, and others must be linked. That is, two pages point to the same frame in physical memory. 
+<img align="right" width="300" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/tasking_fork.png" >
 
-Take the example layout - The picture shows two virtual address spaces and how areas are mapped to an example physical RAM layout.
+A lot of the complication in implementing multitasking is not just the context switching - a new address space must be created for each task. The complication is that some parts of the address space must be copied, and others must be linked. That is, two pages point to the same frame in physical memory. 
+Take the example layout on the right - The picture shows two virtual address spaces and how areas are mapped to an example physical RAM layout.
 
 The stack is indicative of most areas in a virtual address space: it is copied when a new process is forked, so that if the new process changes data the old process doesn't see the change. When we load executables, this will also be the case for the executable code and data.
 
@@ -650,8 +650,9 @@ int main(struct multiboot *mboot_ptr, u32int initial_stack)
 }
 ```
 ## 9.6. Summary
+<img align="right" width="500" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/multitasking_bochs.png" >
+
 Multitasking is really one of the final hurdles to creating a "proper" kernel. Giving the user the appearance of being able to run multiple things concurrently is essential to any modern OS.
-<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/multitasking_bochs.png" >
 
 Full source code is available [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/multitasking.tar.gz).
 
