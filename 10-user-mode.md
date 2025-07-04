@@ -228,3 +228,160 @@ void initialise_syscalls();
 #endif
 ```
 #### 10.2.2.2. syscall.c
+... and then implement it. As mentioned previously, the normal way to dispatch syscalls is to have one register contain a number which indexes a table of functions. the given function is then executed.
+
+For the moment, we just have three functions which can be called via syscall - the three monitor output functions. This will enable us to check whether our code works easier, by allowing text output in user mode.
+```c
+// syscall.c -- Defines the implementation of a system call system.
+// Written for JamesM's kernel development tutorials.
+
+#include "syscall.h"
+#include "isr.h"
+
+#include "monitor.h"
+
+static void syscall_handler(registers_t *regs);
+
+static void *syscalls[3] =
+{
+   &monitor_write,
+   &monitor_write_hex,
+   &monitor_write_dec,
+};
+u32int num_syscalls = 3;
+
+void initialise_syscalls()
+{
+   // Register our syscall handler.
+   register_interrupt_handler (0x80, &syscall_handler);
+}
+
+void syscall_handler(registers_t *regs)
+{
+   // Firstly, check if the requested syscall number is valid.
+   // The syscall number is found in EAX.
+   if (regs->eax >= num_syscalls)
+       return;
+
+   // Get the required syscall location.
+   void *location = syscalls[regs->eax];
+
+   // We don't know how many parameters the function wants, so we just
+   // push them all onto the stack in the correct order. The function will
+   // use all the parameters it wants, and we can pop them all back off afterwards.
+   int ret;
+   asm volatile (" \
+     push %1; \
+     push %2; \
+     push %3; \
+     push %4; \
+     push %5; \
+     call *%6; \
+     pop %%ebx; \
+     pop %%ebx; \
+     pop %%ebx; \
+     pop %%ebx; \
+     pop %%ebx; \
+   " : "=a" (ret) : "r" (regs->edi), "r" (regs->esi), "r" (regs->edx), "r" (regs->ecx), "r" (regs->ebx), "r" (location));
+   regs->eax = ret;
+}
+```
+So here we have a table of the addresses of our syscall functions. The initialise_syscalls function merely adds the syscall_handler function as an interrupt handler for interrupt 0x80.
+
+The syscall_handler function checks that the given function index is valid, then gets the address of the function to call, and then pushes all the parameters we were given onto the stack, call the function, and pop all the parameters back off the stack.
+
+As is customary it also puts the return value of the function call in EAX, when the interrupt returns.
+
+### 10.2.3. Helper macros
+So a syscall from user mode would look something like this:
+```assembly
+mov eax, call>
+mov ebx, 
+mov ecx, 
+mov edx, 
+mov esi, 
+mov edi, 
+int 0x80 ; execute syscall
+         ; return value of syscall is in EAX.
+```
+This is, however, a little unwieldy. We can simplify this by creating some helper macros to define stub functions that contain inline assembler that actually does the syscall;
+
+In syscall.h
+```c
+#define DECL_SYSCALL0(fn) int syscall_##fn();
+#define DECL_SYSCALL1(fn,p1) int syscall_##fn(p1);
+#define DECL_SYSCALL2(fn,p1,p2) int syscall_##fn(p1,p2);
+#define DECL_SYSCALL3(fn,p1,p2,p3) int syscall_##fn(p1,p2,p3);
+#define DECL_SYSCALL4(fn,p1,p2,p3,p4) int syscall_##fn(p1,p2,p3,p4);
+#define DECL_SYSCALL5(fn,p1,p2,p3,p4,p5) int syscall_##fn(p1,p2,p3,p4,p5);
+
+#define DEFN_SYSCALL0(fn, num) \
+int syscall_##fn() \
+{ \
+ int a; \
+ asm volatile("int $0x80" : "=a" (a) : "0" (num)); \
+ return a; \
+}
+
+#define DEFN_SYSCALL1(fn, num, P1) \
+int syscall_##fn(P1 p1) \
+{ \
+ int a; \
+ asm volatile("int $0x80" : "=a" (a) : "0" (num), "b" ((int)p1)); \
+ return a; \
+}
+
+#define DEFN_SYSCALL2(fn, num, P1, P2) \
+int syscall_##fn(P1 p1, P2 p2) \
+{ \
+ int a; \
+ asm volatile("int $0x80" : "=a" (a) : "0" (num), "b" ((int)p1), "c" ((int)p2)); \
+ return a; \
+}
+
+...
+```
+So we have a macro "DECL_SYSCALLX", which declares a stub function for a function fn, with X parameters, they being of type p1..pn.
+
+The macro "DEFN_SYSCALLX" actually defines the stub function, which is just a piece of inline assembly. The num parameter is the index in the syscall function table to call.
+
+So to define our monitor_* functions, we should declare them in syscall.h:
+```c
+DECL_SYSCALL1(monitor_write, const char*)
+DECL_SYSCALL1(monitor_write_hex, const char*)
+DECL_SYSCALL1(monitor_write_dec, const char*)
+```
+and define them in syscall.c:
+```c
+DEFN_SYSCALL1(monitor_write, 0, const char*);
+DEFN_SYSCALL1(monitor_write_hex, 1, const char*);
+DEFN_SYSCALL1(monitor_write_dec, 2, const char*);
+```
+## 10.3. Testing
+In main.c
+```c
+// Start paging.
+initialise_paging();
+
+// Start multitasking.
+initialise_tasking();
+
+// Initialise the initial ramdisk, and set it as the filesystem root.
+fs_root = initialise_initrd(initrd_location);
+
+initialise_syscalls();
+
+switch_to_user_mode();
+
+syscall_monitor_write("Hello, user world!\n");
+
+return 0;
+```
+<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/user_mode_bochs.png" >
+
+With this test code in main.c, you should have a functional user mode and syscall interface, suitable for running untrusted user programs.
+
+Full source code and image file is available [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/user_mode.tar.gz).
+
+### 10.3.1. Possible problems
+If you keep getting page faults when jumping to user mode, make sure that your kernel code/data is set to be user-accessible. When you actually load user programs you won't want this to be the case, however at the moment we merely jump back to the kernel and execute code in main(), so it needs to be accessible in user mode!
