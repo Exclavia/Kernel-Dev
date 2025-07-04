@@ -390,7 +390,5 @@ Full source code and image file is available [here](https://github.com/Exclavia
 If you keep getting page faults when jumping to user mode, make sure that your kernel code/data is set to be user-accessible. When you actually load user programs you won't want this to be the case, however at the moment we merely jump back to the kernel and execute code in main(), so it needs to be accessible in user mode!
 
 
-
-
 <br><br><br><br>
 ## <h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/09-multitasking.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a></p></h4>
