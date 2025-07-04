@@ -613,4 +613,64 @@ This block is being deallocated and so is now a hole. We also create a variable 
    }
 ```
 This piece of code performs our left unification. By subtracting sizeof(header_t) from the header address, we can get a pointer to a footer. We check if this is actually a valid footer by checking it's magic number, and that it is a hole (not allocated!). If so, we rewrite our footer to point to the test footer's header, change our size, and instruct the algorithm not to add an entry to the hole index (as the header we just unified with was already in the index!).
+```c
+   // Unify right
+   // If the thing immediately to the right of us is a header...
+   header_t *test_header = (header_t*) ( (u32int)footer + sizeof(footer_t) );
+   if (test_header->magic == HEAP_MAGIC &&
+       test_header->is_hole)
+   {
+       header->size += test_header->size; // Increase our size.
+       test_footer = (footer_t*) ( (u32int)test_header + // Rewrite it's footer to point to our header.
+                                   test_header->size - sizeof(footer_t) );
+       footer = test_footer;
+       // Find and remove this header from the index.
+       u32int iterator = 0;
+       while ( (iterator < heap->index.size) &&
+               (lookup_ordered_array(iterator, &heap->index) != (void*)test_header) )
+           iterator++;
+
+       // Make sure we actually found the item.
+       ASSERT(iterator < heap->index.size);
+       // Remove it.
+       remove_ordered_array(iterator, &heap->index);
+   }
+```
+Similarly, this code performs our right unification. Again, we test if the header immediately to our right is valid, and is a hole. We rewrite it's footer to point to our header, then remove it's header from the hole index.
+```c
+   // If the footer location is the end address, we can contract.
+   if ( (u32int)footer+sizeof(footer_t) == heap->end_address)
+   {
+       u32int old_length = heap->end_address-heap->start_address;
+       u32int new_length = contract( (u32int)header - heap->start_address, heap);
+       // Check how big we will be after resizing.
+       if (header->size - (old_length-new_length) > 0)
+       {
+           // We will still exist, so resize us.
+           header->size -= old_length-new_length;
+           footer = (footer_t*) ( (u32int)header + header->size - sizeof(footer_t) );
+           footer->magic = HEAP_MAGIC;
+           footer->header = header;
+       }
+       else
+       {
+           // We will no longer exist :(. Remove us from the index.
+           u32int iterator = 0;
+           while ( (iterator < heap->index.size) &&
+                   (lookup_ordered_array(iterator, &heap->index) != (void*)test_header) )
+               iterator++;
+           // If we didn't find ourselves, we have nothing to remove.
+           if (iterator < heap->index.size)
+               remove_ordered_array(iterator, &heap->index);
+       }
+   }
+```
+This is almost the last snippet (I promise!). If we are releasing the last hole in the index (that is, the one closest to the end of memory), then we can contract the heap size. We keep note of the old heap size, then call contract. One of two things can happen here. Either the contract() command will shrink the heap so our hole no longer exists (the 'else' case), or it will either partially contract or not contract at all. In which case our hole still exists, but we need to resize it. We rewrite it's footer with the new size, and exit. If the hole has been removed, we just look ourselves up in the heap index and delete ourselves.
+
+A small one to finish off with:
+```c
+if (do_add == 1)
+  insert_ordered_array((void*) header, &heap->index);
+```
+If we are suppposed to add ourselves into the index, do it here. And that's it! The next thing to do is initialise the heap when paging is initialised :)
 
