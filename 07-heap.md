@@ -732,4 +732,4 @@ You can, of course, experiment with the order of allocations and frees here. The
 ## 7.6. Summary
 Dynamic memory allocation is one of the few things that it is very difficult to do without. Without it, you would have to specify an absolute maximum number of processes running (static array of pids), you would have to statically give the size of every buffer - Generally making your OS lacklustre and woefully inefficient.
 
-Sample code, as ever, can be found here.
+Sample code, as ever, can be found [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/the_heap.tar.gz).
