@@ -734,7 +734,7 @@ monitor_write_hex(d);
 You can, of course, experiment with the order of allocations and frees here. The code above will allocate one variable, a, before initialise_paging is called, so it'll be allocated via placement address. b and c both get allocated on the heap, and printed out. They are then both freed and another variable, d, created. If the address of d is the same as the address of b, then the space reclaimed by b and c has been successfully unified and all is good!
 
 ## 7.6. Summary
-<img align="right" width="500" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/the_heap_bochs.png" >
+<img align="right" width="450" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/the_heap_bochs.png" >
 
 Dynamic memory allocation is one of the few things that it is very difficult to do without. Without it, you would have to specify an absolute maximum number of processes running (static array of pids), you would have to statically give the size of every buffer - Generally making your OS lacklustre and woefully inefficient.
 
@@ -743,5 +743,5 @@ Sample code, as ever, can be found [here](https://github.com/Exclavia/Kernel-Dev
 
 
 
-<br><br><br><br><br><br><br>
+<br><br><br><br><br><br>
 ## <h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/06-paging.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/08-vfs-and-initrd.md">Next Chapter -></a></p></h4>
