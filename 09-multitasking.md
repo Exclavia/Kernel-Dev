@@ -407,6 +407,79 @@ void initialise_tasking()
 }
 ```
 Right. We only have two more functions to write - fork(), and switch_task(). Fork() is a UNIX function to create a new process. It clones the address space and starts the new process running at the same place as the original process is currently at.
+```c
+int fork()
+{
+   // We are modifying kernel structures, and so cannot be interrupted.
+   asm volatile("cli");
+
+   // Take a pointer to this process' task struct for later reference.
+   task_t *parent_task = (task_t*)current_task;
+
+   // Clone the address space.
+   page_directory_t *directory = clone_directory(current_directory);
+```
+So firstly we disable interrupts, because we're changing kernel structures and could cause problems if we're interrupted half way through. We then clone the current page directory.
+```c
+   // Create a new process.
+   task_t *new_task = (task_t*)kmalloc(sizeof(task_t));
+   new_task->id = next_pid++;
+   new_task->esp = new_task->ebp = 0;
+   new_task->eip = 0;
+   new_task->page_directory = directory;
+   new_task->next = 0;
+
+   // Add it to the end of the ready queue.
+   // Find the end of the ready queue...
+   task_t *tmp_task = (task_t*)ready_queue;
+   while (tmp_task->next)
+       tmp_task = tmp_task->next;
+   // ...And extend it.
+   tmp_task->next = new_task;
+```
+Here we create a new process, just like in initialise_tasking. We add it to the end of the ready queue (the queue of tasks that are ready to run). If you don't understand this code, I suggest you look up a tutorial on working with Singly Linked Lists.
+
+We have to tell the task where it should start executing. For this, we need to read the current instruction pointer. We need a quick read_eip() function to do this - this is in process.s:
+```assembly
+[GLOBAL read_eip]
+read_eip:
+  pop eax
+  jmp eax
+```
+This is a rather clever way of reading the current instruction pointer. When read_eip is called, the current instruction location is pushed onto the stack. Normally, we use "ret" to return from a function. This instruction pops the value from the stack and jumps to it. Here, however, we pop the value ourselves, into EAX (remember that EAX is the 'return value' register for the __cdecl calling convention), then jump to it.
+```c
+// This will be the entry point for the new process.
+u32int eip = read_eip();
+```
+Important to note is that because (later) we set the new task's starting address to "eip", after the call to read_eip we could be in one of two states.
+
+1. We just called read_eip, and are the parent task.
+2. We are the child task, and just started executing.
+
+To try and distinguish between the two cases, we check if "current_task == parent_task". In switch_task(), we will add code which updates "current_task" to always point to the currently running task. So, if we are the child task, current_task will not be the same as parent_task, else, it will.
+```c
+   // We could be the parent or the child here - check.
+   if (current_task == parent_task)
+   {
+       // We are the parent, so set up the esp/ebp/eip for our child.
+       u32int esp; asm volatile("mov %%esp, %0" : "=r"(esp));
+       u32int ebp; asm volatile("mov %%ebp, %0" : "=r"(ebp));
+       new_task->esp = esp;
+       new_task->ebp = ebp;
+       new_task->eip = eip;
+       // All finished: Reenable interrupts.
+       asm volatile("sti");
+
+       return new_task->id;
+   }
+   else
+   {
+       // We are the child - by convention return 0.
+       return 0;
+   }
+}
+```
+Let's just run through that code. If we are the parent task, we read the current stack pointer and base pointer values and store them into the new task's task_struct. We also store the instruction pointer we found earlier in there, and reenable interrupts (because we've finished). Fork(), by convention, returns the PID of the child task if we are the parent, or zero if we are the child.
 
 
 
