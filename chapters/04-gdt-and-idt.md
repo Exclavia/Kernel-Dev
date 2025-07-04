@@ -22,8 +22,7 @@ A segment descriptor carries inside it a number representing the ring level it a
 
 ## 4.2. The Global Descriptor Table (practical)
 OK, that was one humungous chunk of theory, lets get into the nitty gritty of implementing this.
-
-<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/gdt_idt_gdt_format_2.png">
+<img align="right" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/gdt_idt_gdt_format_2.png">
 
 One thing I forgot to mention is that GRUB sets a GDT up for you. The problem is that you don't know where that GDT is, or what's in it. So you could accidentally overwrite it, then your computer would triple-fault and reset. Not clever.
 
@@ -46,9 +45,10 @@ struct gdt_entry_struct
 } __attribute__((packed));
 typedef struct gdt_entry_struct gdt_entry_t;
 ```
-<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/gdt_idt_gdt_format_1.png">
+<img align="right" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/gdt_idt_gdt_format_1.png">
 
 Most of those fields should be self-explanatory. The format of the access byte is given on the right above, and the format of the granularity byte is here on the right.
+
 **P**
 > Is segment present? (1 = Yes)
 
@@ -236,7 +236,7 @@ extern void isr0 ();
 ...
 extern void isr31();
 ```
-<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/gdt_idt_idt_format_1.png">
+<img align="right" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/gdt_idt_idt_format_1.png">
 
 See? Very similar to the GDT entry and ptr structs. The flags field format is shown on the right. The lower 5-bits should be constant at 0b0110 - 14 in decimal. The DPL describes the privilege level we expect to be called from - in our case zero, but as we progress we'll have to change that to 3. The P bit signifies the entry is present. Any descriptor with this bit clear will cause a "Interrupt Not Handled" exception.
 
@@ -424,9 +424,10 @@ Now we can test it out! Add this to your main() function:
 asm volatile ("int $0x3");
 asm volatile ("int $0x4");
 ```
-<img src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/gdt_idt_bochs.png">
+<img align="right" width="500" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/gdt_idt_bochs.png">
 
 This causes two software interrupts: 3 and 4. You should see the messages printed out just like the screenshot on the right.
+
 
 Congrats! You've now got a kernel that can handle interrupts, and set up its own segmentation tables (a pretty hollow victory, considering all that code and theory, but unfortunately there's no getting around it!).
 
