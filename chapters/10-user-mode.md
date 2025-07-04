@@ -1,3 +1,5 @@
+<h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/09-multitasking.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a></p></h4>
+
 # 10. User mode (and syscalls)
 <img align="right" width="300" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/rings.png" >
 
@@ -378,7 +380,7 @@ syscall_monitor_write("Hello, user world!\n");
 
 return 0;
 ```
-<img align="right" width="500" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/user_mode_bochs.png" >
+<img align="right" width="450" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/user_mode_bochs.png" >
 
 With this test code in main.c, you should have a functional user mode and syscall interface, suitable for running untrusted user programs.
 
@@ -386,3 +388,9 @@ Full source code and image file is available [here](https://github.com/Exclavia
 
 ### 10.3.1. Possible problems
 If you keep getting page faults when jumping to user mode, make sure that your kernel code/data is set to be user-accessible. When you actually load user programs you won't want this to be the case, however at the moment we merely jump back to the kernel and execute code in main(), so it needs to be accessible in user mode!
+
+
+
+
+<br><br><br><br><br><br><br>
+## <h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/09-multitasking.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a></p></h4>
