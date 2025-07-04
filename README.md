@@ -40,5 +40,7 @@ There are plenty of resources out there if you know where to look. In particula
 ## Additional Notes
 This repository is solely for the purpose of preserving these tutorials so that future developers may use them. **I do not claim to be the owner, nor author of these tutorials.** That solely goes to **James Molloy**. If they, James Molloy, do not want this repository publicized, it is within their full rights to request that I takedown the repository. I will comply with any takedown requests made by James Molloy. *Any questions or requests related to this repository can be sent via messages on Github or via email:* ***git@exclavia.network***
 
-### Changes Made
+### Changes made / Submitting errors
 The repository has some slight changes to it that may differ it from the original tutorial. These are purely due to not being able to find original files, or for clarity. Nothing in the actual tutorials themselves are changed. All original images are shown, as well as all original source code files included at the end of each chapter.
+
+If you happen to notice something that doesn't make sense, or if you have found some errors, please let me know by making a new issue. 
