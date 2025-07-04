@@ -198,7 +198,7 @@ Congratulations, you now have a multiboot compatible assembly trampoline, and yo
 Sample code for this tutorial can be found [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/genesis.tar)
 
 
-<br><br><br><br><br>
+<br><br><br><br><br><br>
 ## <h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/01-environment-setup.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/03-screen.md">Next Chapter -></a></p></h4>
 
 
