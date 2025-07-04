@@ -47,3 +47,44 @@ Allocation is straightforward, if a little long-winded. Most of the steps are er
 4. Write the new block's header and footer.
 5. If the hole was to be split into two parts, do it now and write a new hole into the index.
 6. Return the address of the block + sizeof(header_t) to the user.
+
+### 7.2.2. Deallocation
+Deallocation (freeing) is a little more tricky. As mentioned earlier, this is where the efficiency of a memory-management algorithm is really tested. The problem is effective reclaimation of memory. The naive solution would be to change the given block to a hole and enter it back into the hole index. However, if I do this:
+```c
+int a = kmalloc(8); // Allocate 8 bytes: returns 0xC0080000 for sake of argument
+int b = kmalloc(8); // Allocate another 8 bytes: returns 0xC0080008.
+kfree(a);           // Release a
+kfree(b);           // Release b
+int c = kmalloc(16);// What will this allocation return?
+```
+Note that in this example the space required for headers and footers have been purposely omitted for readability
+
+Here we have allocated space for 8 bytes, twice. We then release both of those allocations. With the naive release algorithm we would then end up with two 8-byte sized holes in the index. When the next allocation (for 16 bytes) comes along, neither of those holes can fit it, so the kmalloc() call will return 0xC0080010. This is suboptimal. There are 16 bytes of space free at 0xC0080000, so we should be reallocating that!
+
+The solution to this problem in most cases is a varation on a simple algorithm that I call unification - That is, converting two adjacent holes into one. (Please note that this coining of a term is not from a sense of self-importance, merely from the absence of a standardised name).
+
+It works thus: When free()ing a block, look at what is immediately to the left (assuming 0-4GB left-to-right) of the header. If that is a footer, which can be discovered from the value of the magic number, then follow the pointer to it's header and query whether it is a hole or a block. If it is a hole, we can modify it's header's size attribute to take into account both it's size and ours, then point our footer to it's header. We have thus amalgamated both holes into one (and in this case there is no need to do an expensive insert operation on the index).
+
+That is what I call unifying left. There is also unifying right, which should be performed on free() as well. Here we look at what is directly after the footer. If we find a header there, again identified by it's magic number, we check if it is a hole. We can then use it's size attribute to find it's footer. We rewrite the footer's pointer to point to our header. Then, all that needs to be done is to remove it's old entry from the hole index, and add our own.
+
+Note also that in the name of reclaiming space, if we are free()ing the last block in the heap (there are no holes or blocks after us), then we can contract the size of the heap. To avoid this happening constantly, in my implementation I have defined a minimum heap size, below which it will not contract.
+
+#### 7.2.2.1. Pseudocode
+
+1. Find the header by taking the given pointer and subtracting the sizeof(header_t).
+2. Sanity checks. Assert that the header and footer's magic numbers remain in tact.
+3. Set the is_hole flag in our header to 1.
+4. If the thing immediately to our left is a footer:
+   - Unify left. In this case, at the end of the algorithm we shouldn't add our header to the hole index (the header we are unifying with is already there!) so set a flag which the algorithm checks later.
+5. If the thing immediately to our right is a header:
+   - Unify right.
+6. If the footer is the last in the heap ( footer_location+sizeof(footer_t) == end_address ):
+   - Contract.
+7. Insert the header into the hole array unless the flag described in Unify left is set.
+
+## 7.3. Implementing an ordered list
+
+So now we come to the implementation. As usual I'm going to try and explain the utility datatypes and functions first, and finish up with the allocation/free functions themselves.
+
+The first datatype we need it an implementation of an ordered list. This concept will be used multiple times in your kernel (it is a common requirement) so it is probably a good idea to abstract it, so it can be used again.
+
