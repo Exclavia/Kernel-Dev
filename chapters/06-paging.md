@@ -29,7 +29,7 @@ This abstraction is extremely useful. It means that compilers can produce a prog
 Virtual memory of this type is wholly dependent on hardware support. It cannot be emulated by software. Luckily, the x86 has just such a thing. It's called the MMU (memory management unit), and it handles all memory mappings due to segmentation and paging, forming a layer between the CPU and memory (actually, it's part of the CPU, but that's just an implementation detail).
 
 ## 6.2. Paging as a concretion of virtual memory
-Virtual memory is an abstract principle. As such it requires concretion through some system/algorithm. Both segmentation (see [chapter 3](https://github.com/Exclavia/Kernel-Dev/blob/main/03-screen.md)) and paging are valid methods for implementing virtual memory. As mentioned in chapter 3 however, segmentation is becoming obsolete. Paging is the newer, better alternative for the x86 architecture.
+Virtual memory is an abstract principle. As such it requires concretion through some system/algorithm. Both segmentation (see [chapter 3](https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/03-screen.md)) and paging are valid methods for implementing virtual memory. As mentioned in chapter 3 however, segmentation is becoming obsolete. Paging is the newer, better alternative for the x86 architecture.
 
 Paging works by splitting the virtual address space into blocks called pages, which are usually 4KB in size. Pages can then be mapped on to frames - equally sized blocks of physical memory.
 
