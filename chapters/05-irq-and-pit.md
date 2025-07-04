@@ -1,3 +1,5 @@
+<h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/04-gdt-and-idt.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/06-paging.md">Next Chapter -></a></p></h4>
+
 # 5. IRQs and the PIT
 In this chapter we're going to be learning about interrupt requests (IRQs) and the programmable interval timer (PIT).
 
@@ -241,11 +243,15 @@ When this is done, all we have to do is edit our Makefile, add one line to main.
 init_timer(50); // Initialise timer to 50Hz
 ```
 
-
 <img align="right" width="500" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/irqs_and_the_pit_bochs.png" >
+
 
 
 You should get output like that. Note however that bochs does not accurately emulate the timer chip, so although your code will run at the correct speed on a real machine, it probably won't in bochs!
 
 Full source code for this tutorial can be found [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/irqs_and_the_pit.tar.gz).
 
+
+<br><br><br><br><br><br><br>
+
+## <h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/04-gdt-and-idt.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/06-paging.md">Next Chapter -></a></p></h4>
