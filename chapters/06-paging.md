@@ -484,7 +484,7 @@ int main(struct multiboot *mboot_ptr)
    return 0;
 }
 ```
-<img align="right" width="500" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/paging_bochs_3.png" >
+<img align="right" width="450" src="https://raw.githubusercontent.com/Exclavia/Kernel-Dev/refs/heads/main/assets/paging_bochs_3.png" >
 
 This will, obviously, initialise paging, print a string to make sure it's set up right and not faulting when it shoudn't, and then force a page fault by reading location 0xA0000000.
 
