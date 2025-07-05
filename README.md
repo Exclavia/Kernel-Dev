@@ -41,7 +41,7 @@ There are plenty of resources out there if you know where to look. In particula
 - [alt.os.development](https://groups.google.com/g/alt.os.development) can answer many of your non-n00b questions. N00b questions are better asked on the [osdever.net forums.](http://forums.osdever.net/)
 
 <br><br><br>
-<p align="center">© 2008 | [James Molloy](http://www.jamesmolloy.co.uk/)</p>
+<p align="center">© 2008 - James Molloy *james@jamesmolloy.co.uk*</p>
 
 
 
