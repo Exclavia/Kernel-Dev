@@ -15,11 +15,11 @@ Each chapter has been converted into formatted markdown pages to be easily viewe
 > This tutorial is known for some bugs and issues, you can read more about in on the [OSDev wiki page dedicated to the tutorial](https://wiki.osdev.org/James_Molloy%27s_Tutorial_Known_Bugs).
 
 ## Roll your own toy UNIX-clone OS
-<p>  This set of tutorials aims to take you through programming a simple UNIX-clone operating system for the x86 architecture. The tutorial uses C as the language of choice, with liberally mixed in bits of assembler. The aim is to talk you through the design and implementation decisions in making an operating system. The OS we make is monolithic in design (drivers are loaded through kernel-mode modules as opposed to user-mode programs), as this is simpler.</p>
+<p> This set of tutorials aims to take you through programming a simple UNIX-clone operating system for the x86 architecture. The tutorial uses C as the language of choice, with liberally mixed in bits of assembler. The aim is to talk you through the design and implementation decisions in making an operating system. The OS we make is monolithic in design (drivers are loaded through kernel-mode modules as opposed to user-mode programs), as this is simpler.</p>
 
-<p>This set of tutorials is very practical in nature. The theory is given in every section, but the majority of the tutorial deals with getting dirty and implementing the abstract ideas and mechanisms discussed everywhere. It is important to note that the kernel implemented is a teaching kernel. I know that the algorithms used are not the most space efficient or optimal. They normally are chosen for their simplicity and ease of understanding. The aim of this is to get you into the correct mindset, and to give you a grounding upon which you can work. The kernel given is extensible, and good algorithms can easily be plugged in.</p>
+<p> This set of tutorials is very practical in nature. The theory is given in every section, but the majority of the tutorial deals with getting dirty and implementing the abstract ideas and mechanisms discussed everywhere. It is important to note that the kernel implemented is a teaching kernel. I know that the algorithms used are not the most space efficient or optimal. They normally are chosen for their simplicity and ease of understanding. The aim of this is to get you into the correct mindset, and to give you a grounding upon which you can work. The kernel given is extensible, and good algorithms can easily be plugged in.</p>
 
-<p>If you have problems with the theory, there are plenty of sites that would be delighted to help you (most questions on OSDev forums are concerned with implementation - "My gets function doesn't work! help!" - A theory question is a breath of fresh air to many ;) ). Links can be found at the bottom of the page.</p>
+<p> If you have problems with the theory, there are plenty of sites that would be delighted to help you (most questions on OSDev forums are concerned with implementation - "My gets function doesn't work! help!" - A theory question is a breath of fresh air to many ;) ). Links can be found at the bottom of the page.</p>
 
 ### Table of contents
 1. [Environment setup](/chapters/01-environment-setup.md)
@@ -35,12 +35,12 @@ Each chapter has been converted into formatted markdown pages to be easily viewe
 
 
 ### Prerequisites
-To compile and run the sample code I provide requires just [GCC](https://gcc.gnu.org/), [ld](https://www.gnu.org/software/binutils/), [NASM](https://www.nasm.us/) and [GNU Make](https://www.gnu.org/software/make/). NASM is an open-source x86 assembler, and is the assembler-of-choice for many x86 OS-devs.
+<p> To compile and run the sample code I provide requires just [GCC](https://gcc.gnu.org/), [ld](https://www.gnu.org/software/binutils/), [NASM](https://www.nasm.us/) and [GNU Make](https://www.gnu.org/software/make/). NASM is an open-source x86 assembler, and is the assembler-of-choice for many x86 OS-devs.</]
 
-There is no point, however, in just compiling and running without comprehension. You must understand what is being coded, and as such you should have a very strong knowledge of C, especially regarding pointers. You should also know a little bit of assembly (Intel syntax is used in these tutorials), including what the EBP register is used for.
+<p> There is no point, however, in just compiling and running without comprehension. You must understand what is being coded, and as such you should have a very strong knowledge of C, especially regarding pointers. You should also know a little bit of assembly (Intel syntax is used in these tutorials), including what the EBP register is used for.</p>
 
 ### Resources
-There are plenty of resources out there if you know where to look. In particular, you should find these useful:
+<p> There are plenty of resources out there if you know where to look. In particular, you should find these useful:</p>
 
 - [Intel Arch Manuals](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html)
 - [OSdev.org](https://wiki.osdev.org/Expanded_Main_Page) wiki and forums.
@@ -55,11 +55,11 @@ ___
 
 
 ## About This Repository 
-This repository exists solely to **preserve and archive** the original set of tutorials authored by **James Molloy**, which were previously available on his [personal website](http://jamesmolloy.co.uk). As of the time of archiving, the original source appears to be offline or inaccessible. These tutorials have historically been a valuable resource for developers, especially those interested in low-level programming and operating system development.
+<p> This repository exists solely to **preserve and archive** the original set of tutorials authored by **James Molloy**, which were previously available on his [personal website](http://jamesmolloy.co.uk). As of the time of archiving, the original source appears to be offline or inaccessible. These tutorials have historically been a valuable resource for developers, especially those interested in low-level programming and operating system development.</p>
 
-I would like to express **full credit and authorship to James Molloy** for the creation of this work. I make **no claim of ownership** over the material contained within this repository. This archive has been made available under the [Creative Commons CC0 license](/LICENSE.md), in the spirit of open access and educational preservation.
+<p> I would like to express **full credit and authorship to James Molloy** for the creation of this work. I make **no claim of ownership** over the material contained within this repository. This archive has been made available under the [Creative Commons CC0 license](/LICENSE.md), in the spirit of open access and educational preservation.</p>
 
-If **James Molloy**, as the original author, wishes for this repository to be modified, removed, or taken down for any reason, I will **comply fully and immediately** with any such request.
+<p> If **James Molloy**, as the original author, wishes for this repository to be modified, removed, or taken down for any reason, I will **comply fully and immediately** with any such request.</p>
 
 For questions, feedback, or takedown requests, I can be reached via:
 - [New issue](https://github.com/Exclavia/Kernel-Dev/issues/new)
@@ -68,11 +68,11 @@ For questions, feedback, or takedown requests, I can be reached via:
 
 
 ### Changes made / Submitting errors
-The archive has some slight changes to it that may differ it from the original source. These are due to not being able to find all of the original files.
+<p> The archive has some slight changes to it that may differ it from the original source. These are due to not being able to find all of the original files.</p>
 
 
-Nothing in the actual tutorials themselves are changed. All original images are shown, as well as all original source code files included at the end of each chapter.
+<p> Nothing in the actual tutorials themselves are changed. All original images are shown, as well as all original source code files included at the end of each chapter.</p>
 
 
-If you happen to notice something that doesn't make sense, or if you have found an error, please let me know by [making a new issue](https://github.com/Exclavia/Kernel-Dev/issues/new). 
+<p> If you happen to notice something that doesn't make sense, or if you have found an error, please let me know by [making a new issue](https://github.com/Exclavia/Kernel-Dev/issues/new).</p>
  
