@@ -45,6 +45,7 @@ There are plenty of resources out there if you know where to look. In particula
 ___
 
 <p align="center">© 2008 - James Molloy
+
 <i>james@jamesmolloy.co.uk</i></p>
 
 
