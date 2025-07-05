@@ -110,6 +110,7 @@ Tools needed to compile and build the code within the tutorials:
 ## Resources
 - [OSdev.org Wiki & Forums](https://wiki.osdev.org/Expanded_Main_Page)
 - [OSdever Tutorials & Forums](http://www.osdever.net/tutorials/)
+- [Operating Systems: From 0 to 1](https://github.com/tuhdo/os01/blob/master/Operating_Systems_From_0_to_1.pdf)
 - [BrokenThorn OS Development Series](http://www.brokenthorn.com/Resources/OSDevIndex.html)
 - [The Little OS Book](https://littleosbook.github.io/)
 - [Intel Software Development Manuals](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html)
