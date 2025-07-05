@@ -40,7 +40,9 @@ There are plenty of resources out there if you know where to look. In particula
 - [OSdever.net](http://www.osdever.net/tutorials/) has many good tutorials and papers, and in particular Bran's kernel development tutorials, which some of the earlier code from this tutorial is based off. (I myself used these tutorials to get started, and the code is so good I haven't had to change it over the years)
 - [alt.os.development](https://groups.google.com/g/alt.os.development) can answer many of your non-n00b questions. N00b questions are better asked on the [osdever.net forums.](http://forums.osdever.net/)
 
-**© 2008 [James Molloy](http://www.jamesmolloy.co.uk/)**
+
+© 2008 | [James Molloy](http://www.jamesmolloy.co.uk/)
+
 
 ## Additional Notes
 This repository is solely for the purpose of preserving these tutorials so that future developers may use them. **I do not claim to be the owner, nor author of these tutorials.** That solely goes to **James Molloy**. If they, James Molloy, do not want this repository publicized, it is within their full rights to request that I takedown the repository. I will comply with any takedown requests made by James Molloy. *Any questions or requests related to this repository can be sent via messages on Github or via email:* ***git@exclavia.network***
