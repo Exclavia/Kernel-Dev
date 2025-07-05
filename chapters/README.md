@@ -18,5 +18,9 @@
 - [alt.os.development](https://groups.google.com/g/alt.os.development)
 - [Original Website](http://www.jamesmolloy.co.uk/tutorial_html/)
 
-#### Copyright - James Molloy - 2008
-***james@jamesmolloy.co.uk***
+
+<br>
+
+___
+
+<p align="center">© 2008 - James Molloy <i>james@jamesmolloy.co.uk</i></p>
