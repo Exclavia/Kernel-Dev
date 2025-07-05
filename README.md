@@ -62,7 +62,7 @@ I would like to express **full credit and authorship to James Molloy** for the c
 If **James Molloy**, as the original author, wishes for this repository to be modified, removed, or taken down for any reason, I will **comply fully and immediately** with any such request.
 
 For questions, feedback, or takedown requests, I can be reached via:
-- [New issue](https://github.com/Exclavia/Kernel-Dev/issues/new)
+- Submitting a [new issue](https://github.com/Exclavia/Kernel-Dev/issues/new)
 - Email: [git@exclavia.network](mailto:git@exclavia.network)
 
 
