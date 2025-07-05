@@ -1,4 +1,4 @@
-<h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/08-vfs-and-initrd.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/10-user-mode.md">Next Chapter -></a></p></h4>
+<h4><p align="right"><a href="/chapters/08-vfs-and-initrd.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="/chapters/10-user-mode.md">Next Chapter -></a></p></h4>
 
 # 9. Multitasking
 Eventually most people want to have their OS run two things (seemingly) at once. This is called multitasking, and is in my opinion one of the final hurdles before you can call your project an 'operating system' or 'kernel'.
@@ -661,4 +661,4 @@ Full source code is available [here](https://github.com/Exclavia/Kernel-Dev/blo
 
 
 <br><br><br><br><br><br><br>
-## <h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/08-vfs-and-initrd.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/10-user-mode.md">Next Chapter -></a></p></h4>
+## <h4><p align="right"><a href="/chapters/08-vfs-and-initrd.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="/chapters/10-user-mode.md">Next Chapter -></a></p></h4>
