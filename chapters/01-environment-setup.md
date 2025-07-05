@@ -127,7 +127,7 @@ sudo bochs -f bochsrc.txt
 sudo /sbin/losetup -d /dev/loop0
 ```
 
-## <h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/02-genesis.md">Next Chapter -></a></p></h4>
+## <h4><p align="right"><a href="/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="/chapters/02-genesis.md">Next Chapter -></a></p></h4>
 
 [^1]: Assumed to be original referenced file. See files [README](https://github.com/Exclavia/Kernel-Dev/blob/main/files/README.md) for more info.
 [^2]: Alternative version also available [here](https://github.com/Exclavia/Kernel-Dev/blob/main/files/alt/)
