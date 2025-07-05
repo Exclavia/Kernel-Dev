@@ -1,4 +1,4 @@
-<h4><p align="right"><a href="/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="/02-genesis.md">Next Chapter -></a></p></h4>
+<h4><p align="right"><a href="/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="/chapters/02-genesis.md">Next Chapter -></a></p></h4>
 
 # 1. Environment setup
 We need a base from which to design and make our kernel. Here I will be assuming that you are using a *nix system, with the GNU toolchain. If you want to use a windows system, you must either use cygwin (which is a *nix emulation environment) or DJGPP. Either way, the makefiles and commands in this tutorial may not work.
