@@ -6,6 +6,7 @@ A clone of **James Molloy's** Kernel Development tutorials, grabbed via WayBack 
 
 > [!NOTE]
 > **Known bugs & issues**
+> 
 > This tutorial is known for some bugs and issues, you can read more about in on the [OSDev wiki page dedicated to the tutorial](https://wiki.osdev.org/James_Molloy%27s_Tutorial_Known_Bugs).
 
 ## Roll your own toy UNIX-clone OS
