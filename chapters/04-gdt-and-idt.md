@@ -209,7 +209,7 @@ The special, CPU-dedicated interrupts are shown below.
 - 18 - Machine check exception
 - 19-31 - Reserved
 
-## 4.4. The Interrupt Descriptor Table (practice)
+## 4.4. The Interrupt Descriptor Table (practical)
 ### 4.4.1. descriptor_tables.h
 We should add some definitions to descriptor_tables.h:
 ```c
