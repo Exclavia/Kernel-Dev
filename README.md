@@ -5,6 +5,8 @@ I used [Wayback Machine](http://web.archive.org/) snapshots from 2021-2023 in or
 
 Each chapter has been converted into formatted markdown pages to be easily viewed.
 
+If you happen to notice something that doesn't make sense, or if you have found an error, please let me know by [making a new issue](https://github.com/Exclavia/Kernel-Dev/issues/new).
+
 - [Original Website](http://www.jamesmolloy.co.uk/tutorial_html/)
 - [About this repository](#about-this-repository)
 - [Project Files](/files/)
@@ -104,12 +106,6 @@ There are plenty of resources out there if you know where to look. In particula
 - [OSdever.net](http://www.osdever.net/tutorials/) has many good tutorials and papers, and in particular Bran's kernel development tutorials, which some of the earlier code from this tutorial is based off. (I myself used these tutorials to get started, and the code is so good I haven't had to change it over the years)
 - [alt.os.development](https://groups.google.com/g/alt.os.development) can answer many of your non-n00b questions. N00b questions are better asked on the [osdever.net forums.](http://forums.osdever.net/)
 
-<br>
-
-___
-
-<p align="center">© 2008 - James Molloy</p>
-
 
 ## About This Repository 
 This repository exists solely to **preserve and archive** the original set of tutorials authored by **James Molloy**, which were previously available on his [personal website](http://jamesmolloy.co.uk). As of the time of archiving, the original source appears to be offline or inaccessible. These tutorials have historically been a valuable resource for developers, especially those interested in low-level programming and operating system development.
@@ -119,17 +115,14 @@ I would like to express **full credit and authorship to James Molloy** for the c
 If **James Molloy**, as the original author, wishes for this repository to be modified, removed, or taken down for any reason, I will **comply fully and immediately** with any such request.
 
 For questions, feedback, or takedown requests, I can be reached via:
-- Submitting a [new issue](https://github.com/Exclavia/Kernel-Dev/issues/new)
-- Email: [git@exclavia.network](mailto:git@exclavia.network)
+- GitHub: [Issue](https://github.com/Exclavia/Kernel-Dev/issues/new)
+- E-mail: [git@exclavia.network](mailto:git@exclavia.network)
 
+</br>
 
+ ---
 
-### Changes made / Submitting errors
-The archive has some slight changes to it that may differ it from the original source. These are due to not being able to find all of the original files.
+<p align="center">&copy; <b>2008 James Molloy - james@jamesmolloy.co.uk</b></p>
+<p align="center"><i>Archived: July 2025 by Tristan Wehler</i></p>
 
-
-Nothing in the actual tutorials themselves are changed. All original images are shown, as well as all original source code files included at the end of each chapter.
-
-
-If you happen to notice something that doesn't make sense, or if you have found an error, please let me know by [making a new issue](https://github.com/Exclavia/Kernel-Dev/issues/new).
- 
+---
