@@ -1,4 +1,4 @@
-<h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/02-genesis.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/04-gdt-and-idt.md">Next Chapter -></a></p></h4>
+<h4><p align="right"><a href="/chapters/02-genesis.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="/chapters/04-gdt-and-idt.md">Next Chapter -></a></p></h4>
 
 # 3. The Screen
 So, now that we have a 'kernel' that can run and stick itself into an infinite loop, it's time to get something interesting appearing on the screen. Along with serial I/O, the monitor will be your most important ally in the debugging battle.
@@ -293,4 +293,4 @@ Source code for this tutorial is available [here](https://github.com/Exclavia/K
 
 
 <br><br><br><br><br><br>
-## <h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/02-genesis.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/04-gdt-and-idt.md">Next Chapter -></a></p></h4>
+## <h4><p align="right"><a href="/chapters/02-genesis.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="/chapters/04-gdt-and-idt.md">Next Chapter -></a></p></h4>
