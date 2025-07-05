@@ -1,5 +1,6 @@
 # Kernel Development Tutorials
-A clone of **James Molloy's** Kernel Development tutorials, grabbed via WayBack archive circa. 2021-2023 (As of July 2025 the website seems to be down.)
+An archive of James Molloy's Kernel Development tutorials. As of time of archiving the original website seems to be offline or inaccessible. I used [Wayback Machine](http://web.archive.org/) snapshots from 2021-2023 in order to backup the tutorial pages and, some of, the original tutorial resources/files. I have converted each of the chapters into formatted markdown pages to be easily viewed.
+
 - [Original Website](http://www.jamesmolloy.co.uk/tutorial_html/)
 - [About this repository](#about-this-repository)
 - [Project Files](/files/)
