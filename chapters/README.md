@@ -23,4 +23,5 @@
 
 ___
 
-<p align="center">© 2008 - James Molloy <i>james@jamesmolloy.co.uk</i></p>
+<p align="center">© 2008 - James Molloy</p>
+<p align="center"><i>james@jamesmolloy.co.uk</i></p>
