@@ -1,4 +1,4 @@
-<h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/05-irq-and-pit.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/07-heap.md">Next Chapter -></a></p></h4>
+<h4><p align="right"><a href="/chapters/05-irq-and-pit.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="/chapters/07-heap.md">Next Chapter -></a></p></h4>
 
 # 6. Paging
 In this chapter we're going to enable paging. Paging serves a twofold purpose - memory protection, and virtual memory (the two being almost inextricably interlinked).
@@ -494,4 +494,4 @@ Congrats! you're all done! you can now move on to the next tutorial - making a w
 
 
 <br><br><br><br><br><br>
-## <h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/05-irq-and-pit.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/07-heap.md">Next Chapter -></a></p></h4>
+## <h4><p align="right"><a href="/chapters/05-irq-and-pit.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="/chapters/07-heap.md">Next Chapter -></a></p></h4>
