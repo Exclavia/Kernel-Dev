@@ -21,6 +21,13 @@ Each chapter has been converted into formatted markdown pages to be easily viewe
 
 <p> If you have problems with the theory, there are plenty of sites that would be delighted to help you (most questions on OSDev forums are concerned with implementation - "My gets function doesn't work! help!" - A theory question is a breath of fresh air to many ;) ). Links can be found at the bottom of the page.</p>
 
+
+### Prerequisites
+To compile and run the sample code I provide requires just [GCC](https://gcc.gnu.org/), [ld](https://www.gnu.org/software/binutils/), [NASM](https://www.nasm.us/) and [GNU Make](https://www.gnu.org/software/make/). NASM is an open-source x86 assembler, and is the assembler-of-choice for many x86 OS-devs.
+
+There is no point, however, in just compiling and running without comprehension. You must understand what is being coded, and as such you should have a very strong knowledge of C, especially regarding pointers. You should also know a little bit of assembly (Intel syntax is used in these tutorials), including what the EBP register is used for.
+
+
 ### Table of contents
 1. [Environment setup](/chapters/01-environment-setup.md)
 
@@ -88,11 +95,6 @@ Each chapter has been converted into formatted markdown pages to be easily viewe
     - 10.2. [System calls](/chapters/10-user-mode.md#102-system-calls)
     - 10.3. [Testing](/chapters/10-user-mode.md#103-testing)
 
-
-### Prerequisites
-To compile and run the sample code I provide requires just [GCC](https://gcc.gnu.org/), [ld](https://www.gnu.org/software/binutils/), [NASM](https://www.nasm.us/) and [GNU Make](https://www.gnu.org/software/make/). NASM is an open-source x86 assembler, and is the assembler-of-choice for many x86 OS-devs.
-
-There is no point, however, in just compiling and running without comprehension. You must understand what is being coded, and as such you should have a very strong knowledge of C, especially regarding pointers. You should also know a little bit of assembly (Intel syntax is used in these tutorials), including what the EBP register is used for.
 
 ### Resources
 There are plenty of resources out there if you know where to look. In particular, you should find these useful:
