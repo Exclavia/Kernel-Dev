@@ -1,7 +1,7 @@
 # Kernel Development Tutorials
 A clone of **James Molloy's** Kernel Development tutorials, grabbed via WayBack archive circa. 2021-2023 (As of July 2025 the website seems to be down.)
 - [Original Website](http://www.jamesmolloy.co.uk/tutorial_html/)
-- [Additional Notes](#additional-notes)
+- [About this repository](#about-this-repository)
 - [Project Files](/files/)
 
 > [!NOTE]
@@ -47,8 +47,18 @@ ___
 <p align="center">© 2008 - James Molloy</p>
 
 
-## Additional Notes
-This repository is solely for the purpose of preserving these tutorials so that future developers may use them. **I do not claim to be the owner, nor author of these tutorials.** That solely goes to **James Molloy**. If they, James Molloy, do not want this repository publicized, it is within their full rights to request that I takedown the repository. I will comply with any takedown requests made by James Molloy. *Any questions or requests related to this repository can be sent via messages on Github or via email:* ***git@exclavia.network***
+## About This Repository 
+This repository exists solely to **preserve and archive** the original set of tutorials authored by **James Molloy**, which were previously available on his [personal website](http://jamesmolloy.co.uk). As of the time of archiving, the original source appears to be offline or inaccessible. These tutorials have historically been a valuable resource for developers, especially those interested in low-level programming and operating system development.
+
+I would like to express **full credit and authorship to James Molloy** for the creation of this work. I make **no claim of ownership** over the material contained within this repository. This archive has been made available under the [Creative Commons CC0 license](/LICENSE.md), in the spirit of open access and educational preservation.
+
+If **James Molloy**, as the original author, wishes for this repository to be modified, removed, or taken down for any reason, I will **comply fully and immediately** with any such request.
+
+For questions, feedback, or takedown requests, I can be reached via:
+- [GitHub messages](https://github.com/Exclavia) (or [issues](https://github.com/Exclavia/Kernel-Dev/issues/new))
+- Email: [git@exclavia.network](mailto:git@exclavia.network)
+
+
 
 ### Changes made / Submitting errors
 The repository has some slight changes to it that may differ it from the original tutorial. These are purely due to not being able to find original files, or for clarity. Nothing in the actual tutorials themselves are changed. All original images are shown, as well as all original source code files included at the end of each chapter.
