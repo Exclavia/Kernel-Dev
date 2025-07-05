@@ -1,4 +1,4 @@
-<h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/04-gdt-and-idt.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/06-paging.md">Next Chapter -></a></p></h4>
+<h4><p align="right"><a href="/chapters/04-gdt-and-idt.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="/chapters/06-paging.md">Next Chapter -></a></p></h4>
 
 # 5. IRQs and the PIT
 In this chapter we're going to be learning about interrupt requests (IRQs) and the programmable interval timer (PIT).
@@ -254,4 +254,4 @@ Full source code for this tutorial can be found [here](https://github.com/Excla
 
 <br><br><br><br><br><br><br>
 
-## <h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/04-gdt-and-idt.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/06-paging.md">Next Chapter -></a></p></h4>
+## <h4><p align="right"><a href="/chapters/04-gdt-and-idt.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="/chapters/06-paging.md">Next Chapter -></a></p></h4>
