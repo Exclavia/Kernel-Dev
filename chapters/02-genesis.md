@@ -1,4 +1,4 @@
-<h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/01-environment-setup.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/03-screen.md">Next Chapter -></a></p></h4>
+<h4><p align="right"><a href="/chapters/01-environment-setup.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="/chapters/03-screen.md">Next Chapter -></a></p></h4>
 
 # 2. Genesis
 ## 2.1. The boot code
@@ -199,7 +199,7 @@ Sample code for this tutorial can be found [here](https://github.com/Exclavia/K
 
 
 <br><br><br><br><br><br>
-## <h4><p align="right"><a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/01-environment-setup.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/tree/main/chapters#table-of-contents">Table of Contents</a> &nbsp; | &nbsp; <a href="https://github.com/Exclavia/Kernel-Dev/blob/main/chapters/03-screen.md">Next Chapter -></a></p></h4>
+## <h4><p align="right"><a href="/chapters/01-environment-setup.md"><- Prev. Chapter</a> &nbsp; | &nbsp; <a href="/chapters/03-screen.md">Next Chapter -></a></p></h4>
 
 
 
